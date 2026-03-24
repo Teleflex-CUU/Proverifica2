@@ -1,145 +1,367 @@
 <!DOCTYPE html>
+
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>App PROVERIFICA - Verificación de Salud Laboral</title>
-    <style>
-        :root {
-            --cumple: #2ecc71;
-            --parcial: #f1c40f;
-            --nocumple: #e74c3c;
-            --na: #95a5a6;
-            --bg: #f4f7f6;
-        }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg); margin: 0; padding: 20px; }
-        .container { max-width: 900px; margin: auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        h1 { color: #2c3e50; text-align: center; border-bottom: 2px solid #3498db; padding-bottom: 10px; }
-        h2 { color: #2980b9; margin-top: 30px; background: #ecf0f1; padding: 10px; border-left: 5px solid #2980b9; }
-        h3 { color: #7f8c8d; font-size: 1.1em; margin-top: 20px; }
-        .pregunta-row { display: flex; align-items: center; justify-content: space-between; padding: 12px; border-bottom: 1px solid #eee; transition: background 0.3s; }
-        .pregunta-row:hover { background: #f9f9f9; }
-        .texto-pregunta { flex: 1; padding-right: 20px; font-size: 0.95em; }
-        .options { display: flex; gap: 10px; }
-        .btn-check { cursor: pointer; padding: 8px 12px; border: 2px solid #ddd; border-radius: 5px; font-weight: bold; font-size: 0.8em; background: white; transition: all 0.2s; }
-        
-        /* Estados de color */
-        .btn-si.active { background-color: var(--cumple); color: white; border-color: #27ae60; }
-        .btn-pm.active { background-color: var(--parcial); color: white; border-color: #f39c12; }
-        .btn-no.active { background-color: var(--nocumple); color: white; border-color: #c0392b; }
-        .btn-na.active { background-color: var(--na); color: white; border-color: #7f8c8d; }
-
-        .resumen { margin-top: 40px; padding: 20px; background: #2c3e50; color: white; border-radius: 8px; text-align: center; }
-        #score { font-size: 2em; font-weight: bold; color: var(--cumple); }
-    </style>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>PROVERIFICA® — Cuestionario de Verificación</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0b0d12;--surface:#111318;--surface2:#181c24;--border:#22273a;
+  --text:#dde3f5;--muted:#5a6282;--accent:#3d6fff;
+  --green-bg:#071a10;--green-bd:#1a5235;--green-tx:#2ecc71;--green-glow:rgba(46,204,113,.15);
+  --yellow-bg:#1a1400;--yellow-bd:#5c4200;--yellow-tx:#f1c40f;--yellow-glow:rgba(241,196,15,.13);
+  --red-bg:#190505;--red-bd:#5c1010;--red-tx:#e74c3c;--red-glow:rgba(231,76,60,.15);
+  --na-bg:#12141a;--na-bd:#2a2e40;--na-tx:#5a6282;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'IBM Plex Mono',monospace;min-height:100vh;padding-bottom:80px}
+header{background:linear-gradient(135deg,#0d1a3a,#0b0d12);border-bottom:1px solid var(--border);padding:20px 28px;display:flex;align-items:center;gap:18px;position:sticky;top:0;z-index:100;backdrop-filter:blur(12px)}
+.logo{width:48px;height:48px;border-radius:11px;background:linear-gradient(135deg,var(--accent),#6b4fff);display:grid;place-items:center;flex-shrink:0;font-family:'Syne',sans-serif;font-weight:800;font-size:15px;color:#fff;box-shadow:0 0 24px rgba(61,111,255,.4)}
+.hd-text h1{font-family:'Syne',sans-serif;font-weight:800;font-size:19px}
+.hd-text p{color:var(--muted);font-size:10px;margin-top:2px}
+.hd-right{margin-left:auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.btn{font-family:'IBM Plex Mono',monospace;font-size:11px;padding:8px 16px;border-radius:8px;cursor:pointer;border:1px solid var(--border);background:var(--surface2);color:var(--text);transition:all .15s;white-space:nowrap}
+.btn:hover{background:var(--border)}
+.btn-primary{background:var(--accent);border-color:var(--accent);color:#fff;box-shadow:0 0 14px rgba(61,111,255,.3)}
+.btn-primary:hover{background:#5b84ff}
+.btn-ghost{background:transparent;color:var(--muted)}
+.btn-ghost:hover{color:var(--text);background:var(--surface2)}
+/* company */
+.company-bar{max-width:1100px;margin:20px auto 0;padding:0 22px;display:grid;grid-template-columns:1fr 1fr auto;gap:12px;align-items:end}
+.company-bar label{font-size:10px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;display:block;margin-bottom:5px}
+.field{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--text);outline:none;width:100%;transition:border-color .15s}
+.field:focus{border-color:var(--accent)}
+.field::placeholder{color:var(--muted)}
+/* legend */
+.legend{max-width:1100px;margin:16px auto 0;padding:0 22px;display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.leg-card{border:1px solid;border-radius:9px;padding:10px 14px;display:flex;align-items:center;gap:10px}
+.leg-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.leg-card.green{background:var(--green-bg);border-color:var(--green-bd);box-shadow:0 0 12px var(--green-glow)}
+.leg-card.yellow{background:var(--yellow-bg);border-color:var(--yellow-bd);box-shadow:0 0 12px var(--yellow-glow)}
+.leg-card.red{background:var(--red-bg);border-color:var(--red-bd);box-shadow:0 0 12px var(--red-glow)}
+.leg-card.na{background:var(--na-bg);border-color:var(--na-bd)}
+.green .leg-dot{background:var(--green-tx);box-shadow:0 0 5px var(--green-tx)}
+.yellow .leg-dot{background:var(--yellow-tx);box-shadow:0 0 5px var(--yellow-tx)}
+.red .leg-dot{background:var(--red-tx);box-shadow:0 0 5px var(--red-tx)}
+.na .leg-dot{background:var(--na-tx)}
+.leg-info .lbl{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em}
+.leg-info .rng{font-family:'Syne',sans-serif;font-weight:700;font-size:13px}
+.green .rng{color:var(--green-tx)}.yellow .rng{color:var(--yellow-tx)}.red .rng{color:var(--red-tx)}.na .rng{color:var(--na-tx)}
+/* nav */
+.nav-wrap{max-width:1100px;margin:22px auto 0;padding:0 22px}
+.nav-tabs{display:flex;gap:5px;flex-wrap:wrap}
+.tab-btn{font-family:'IBM Plex Mono',monospace;font-size:10px;padding:6px 12px;border-radius:7px;border:1px solid var(--border);background:var(--surface);color:var(--muted);cursor:pointer;transition:all .15s;white-space:nowrap}
+.tab-btn:hover{color:var(--text);border-color:var(--accent)}
+.tab-btn.active{background:var(--accent);border-color:var(--accent);color:#fff;box-shadow:0 0 12px rgba(61,111,255,.3)}
+/* chapters */
+.chapters{max-width:1100px;margin:16px auto 0;padding:0 22px}
+.chapter-panel{display:none}
+.chapter-panel.active{display:block;animation:fadeUp .25s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.ch-header{background:var(--surface);border:1px solid var(--border);border-radius:12px 12px 0 0;padding:16px 22px;display:flex;align-items:center;gap:12px;border-bottom:2px solid var(--accent)}
+.ch-num{width:34px;height:34px;border-radius:8px;background:var(--accent);display:grid;place-items:center;font-family:'Syne',sans-serif;font-weight:800;font-size:13px;color:#fff;flex-shrink:0}
+.ch-title{font-family:'Syne',sans-serif;font-weight:700;font-size:15px}
+.ch-sub{font-size:10px;color:var(--muted);margin-top:2px}
+/* sections */
+.section{background:var(--surface);border:1px solid var(--border);border-top:none}
+.section:last-of-type{border-radius:0 0 12px 12px}
+.sec-header{padding:12px 22px;background:var(--surface2);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none}
+.sec-header:hover{background:#1e2230}
+.sec-title{font-family:'Syne',sans-serif;font-weight:600;font-size:12px;display:flex;align-items:center;gap:9px}
+.sec-num{width:22px;height:22px;border-radius:5px;background:var(--border);display:grid;place-items:center;font-size:10px;color:var(--muted);flex-shrink:0}
+.sec-badge{font-size:10px;padding:3px 9px;border-radius:99px;border:1px solid}
+.sec-badge.green{background:var(--green-bg);border-color:var(--green-bd);color:var(--green-tx)}
+.sec-badge.yellow{background:var(--yellow-bg);border-color:var(--yellow-bd);color:var(--yellow-tx)}
+.sec-badge.red{background:var(--red-bg);border-color:var(--red-bd);color:var(--red-tx)}
+.sec-badge.pending{background:var(--na-bg);border-color:var(--na-bd);color:var(--muted)}
+.sec-arrow{color:var(--muted);font-size:11px;transition:transform .2s}
+.sec-arrow.open{transform:rotate(180deg)}
+.sec-body{display:none;padding:0 22px 18px}
+.sec-body.open{display:block}
+/* questions */
+.q-header-row{display:grid;grid-template-columns:1fr repeat(4,52px);gap:5px;padding:10px 0 6px;border-bottom:1px solid var(--border);font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em}
+.q-header-row span:not(:first-child){text-align:center}
+.q-row{display:grid;grid-template-columns:1fr repeat(4,52px);gap:5px;padding:9px 0;border-bottom:1px dashed var(--border);align-items:center}
+.q-row:last-of-type{border-bottom:none}
+.q-row:hover{background:rgba(255,255,255,.015);border-radius:5px;margin:0 -4px;padding:9px 4px}
+.q-code{font-size:9px;color:var(--muted);margin-right:6px}
+.q-text{font-size:11px;line-height:1.5;color:var(--text)}
+.q-cell{display:flex;justify-content:center;align-items:center}
+.radio-opt{width:26px;height:26px;border-radius:6px;border:1px solid var(--border);background:var(--bg);cursor:pointer;display:grid;place-items:center;font-size:9px;font-weight:600;color:var(--muted);transition:all .1s;user-select:none}
+.radio-opt:hover{border-color:var(--accent);color:var(--accent)}
+.radio-opt.sel-si{background:var(--green-bg);border-color:var(--green-bd);color:var(--green-tx);box-shadow:0 0 7px var(--green-glow)}
+.radio-opt.sel-pm{background:var(--yellow-bg);border-color:var(--yellow-bd);color:var(--yellow-tx);box-shadow:0 0 7px var(--yellow-glow)}
+.radio-opt.sel-no{background:var(--red-bg);border-color:var(--red-bd);color:var(--red-tx);box-shadow:0 0 7px var(--red-glow)}
+.radio-opt.sel-na{background:var(--na-bg);border-color:var(--na-bd);color:var(--na-tx)}
+/* section totals */
+.sec-totals{margin-top:14px;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:12px 16px;display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.tot-item{text-align:center}
+.tot-val{font-family:'Syne',sans-serif;font-weight:800;font-size:18px}
+.tot-lbl{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-top:1px}
+.tot-item.t-si .tot-val{color:var(--green-tx)}
+.tot-item.t-pm .tot-val{color:var(--yellow-tx)}
+.tot-item.t-no .tot-val{color:var(--red-tx)}
+.tot-item.t-pct .tot-val{color:var(--accent)}
+.pbar-wrap{margin-top:10px;height:5px;background:var(--border);border-radius:99px;overflow:hidden}
+.pbar{height:100%;border-radius:99px;transition:width .5s cubic-bezier(.4,0,.2,1)}
+.pbar.green{background:var(--green-tx)}.pbar.yellow{background:var(--yellow-tx)}.pbar.red{background:var(--red-tx)}.pbar.pending{background:var(--muted)}
+.nivel-badge{display:inline-flex;align-items:center;gap:7px;margin-top:10px;padding:7px 14px;border-radius:7px;border:1px solid;font-size:11px}
+.nivel-badge.green{background:var(--green-bg);border-color:var(--green-bd);color:var(--green-tx)}
+.nivel-badge.yellow{background:var(--yellow-bg);border-color:var(--yellow-bd);color:var(--yellow-tx)}
+.nivel-badge.red{background:var(--red-bg);border-color:var(--red-bd);color:var(--red-tx)}
+.nivel-badge.pending{background:var(--na-bg);border-color:var(--na-bd);color:var(--muted)}
+/* chapter summary */
+.ch-summary{margin-top:18px;background:var(--surface);border:1px solid var(--border);border-radius:11px;overflow:hidden}
+.ch-summary table{width:100%;border-collapse:collapse;font-size:11px}
+.ch-summary th{background:var(--surface2);padding:9px 13px;text-align:left;font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid var(--border)}
+.ch-summary td{padding:9px 13px;border-bottom:1px dashed var(--border)}
+.ch-summary tr:last-of-type td{border-bottom:none}
+.ch-summary tr:hover td{background:rgba(255,255,255,.01)}
+.td-pct{font-family:'Syne',sans-serif;font-weight:700;font-size:13px}
+.td-pct.green{color:var(--green-tx)}.td-pct.yellow{color:var(--yellow-tx)}.td-pct.red{color:var(--red-tx)}.td-pct.pending{color:var(--muted)}
+/* results */
+#results-panel{display:none;max-width:1100px;margin:18px auto 0;padding:0 22px}
+.res-header{font-family:'Syne',sans-serif;font-weight:800;font-size:20px;margin-bottom:18px}
+.big-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:24px}
+.big-card{background:var(--surface);border:1px solid var(--border);border-radius:13px;padding:18px;text-align:center}
+.big-val{font-family:'Syne',sans-serif;font-weight:800;font-size:30px}
+.big-lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-top:3px}
+.big-card.b-total .big-val{color:var(--accent)}
+.big-card.b-green .big-val{color:var(--green-tx)}
+.big-card.b-yellow .big-val{color:var(--yellow-tx)}
+.big-card.b-red .big-val{color:var(--red-tx)}
+.res-table{background:var(--surface);border:1px solid var(--border);border-radius:11px;overflow:hidden}
+.res-table table{width:100%;border-collapse:collapse;font-size:11px}
+.res-table th{background:var(--surface2);padding:10px 14px;text-align:left;font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid var(--border)}
+.res-table td{padding:10px 14px;border-bottom:1px dashed var(--border)}
+.res-table tr:last-of-type td{border-bottom:none}
+.res-table tr:hover td{background:rgba(255,255,255,.01)}
+.pct-cell{font-family:'Syne',sans-serif;font-weight:800;font-size:15px}
+.pct-cell.green{color:var(--green-tx)}.pct-cell.yellow{color:var(--yellow-tx)}.pct-cell.red{color:var(--red-tx)}.pct-cell.pending{color:var(--muted)}
+/* obs */
+.obs-field{margin-top:10px;width:100%;background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:9px 12px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text);resize:vertical;min-height:54px;outline:none}
+.obs-field:focus{border-color:var(--accent)}
+.obs-field::placeholder{color:var(--muted)}
+@media(max-width:700px){
+  .legend{grid-template-columns:repeat(2,1fr)}
+  .big-summary{grid-template-columns:repeat(2,1fr)}
+  .company-bar{grid-template-columns:1fr;gap:8px}
+  .q-header-row,.q-row{grid-template-columns:1fr repeat(4,40px)}
+}
+</style>
 </head>
 <body>
 
-<div class="container">
-    <h1>Modelo PROVERIFICA®</h1>
-    <p style="text-align: center; color: #666;">Cuestionario de Verificación (CV) Interactiva</p>
+<header>
+  <div class="logo">PV</div>
+  <div class="hd-text">
+    <h1>PROVERIFICA®</h1>
+    <p>Modelo para la Verificación, Diagnóstico y Vigilancia de la Salud Laboral</p>
+  </div>
+  <div class="hd-right">
+    <button class="btn btn-ghost" onclick="resetAll()">↺ Reiniciar</button>
+    <button class="btn btn-primary" onclick="showResults()">📊 Ver Resultados</button>
+  </div>
+</header>
 
-    <h2>I. Evaluación Preliminar de la Empresa</h2>
-    
-    <h3>1. Edificios, locales, instalaciones y áreas</h3>
-    <div id="seccion-1"></div>
+<div class="company-bar">
+  <div><label>Empresa / Razón Social</label><input class="field" id="empresa" type="text" placeholder="Nombre de la empresa"/></div>
+  <div><label>Fecha de Verificación</label><input class="field" id="fecha" type="date"/></div>
+  <div><button class="btn" onclick="setToday()" style="margin-bottom:0">Hoy</button></div>
+</div>
 
-    <h3>2. Orden y limpieza</h3>
-    <div id="seccion-2"></div>
+<div class="legend">
+  <div class="leg-card green"><div class="leg-dot"></div><div class="leg-info"><div class="lbl">Cumple</div><div class="rng">≥ 80%</div></div></div>
+  <div class="leg-card yellow"><div class="leg-dot"></div><div class="leg-info"><div class="lbl">Cumple Parcialmente</div><div class="rng">50%–79%</div></div></div>
+  <div class="leg-card red"><div class="leg-dot"></div><div class="leg-info"><div class="lbl">No Cumple</div><div class="rng">&lt; 50%</div></div></div>
+  <div class="leg-card na"><div class="leg-dot"></div><div class="leg-info"><div class="lbl">No Aplica</div><div class="rng">N/A</div></div></div>
+</div>
 
-    <h2>II. Intervención de los Niveles Directivos</h2>
-    
-    <h3>1. Políticas de salud en el trabajo</h3>
-    <div id="seccion-3"></div>
-
-    <div class="resumen">
-        <div>Índice de Eficacia General</div>
-        <div id="score">0%</div>
-        <p id="nivel-riesgo">Pendiente de evaluación</p>
-    </div>
+<div class="nav-wrap"><div class="nav-tabs" id="nav-tabs"></div></div>
+<div class="chapters" id="chapters-container"></div>
+<div id="results-panel">
+  <div class="res-header">📋 Resultados de la Verificación PROVERIFICA®</div>
+  <div class="big-summary" id="big-summary"></div>
+  <div class="res-table" id="res-table"></div>
 </div>
 
 <script>
-    const datosCuestionario = [
-        { seccion: "seccion-1", preguntas: [
-            "1.1. Los edificios, locales e instalaciones están en buenas condiciones.",
-            "1.2. Características acordes con la actividad realizada.",
-            "1.3. Pisos con superficies antideslizantes y libres de daños.",
-            "1.6. Rutas y salidas de emergencia marcadas y sin obstrucciones.",
-            "1.9. Escaleras y plataformas cuentan con protecciones."
-        ]},
-        { seccion: "seccion-2", preguntas: [
-            "2.1. Personal de intendencia dedicado exclusivamente al orden.",
-            "2.3. Instalaciones y puestos de trabajo ordenados y limpios.",
-            "2.4. Botes de basura especiales para residuos químicos/biológicos.",
-            "2.9. Sistema contra plagas instalado y funcionando."
-        ]},
-        { seccion: "seccion-3", preguntas: [
-            "1.1. Existe documento de políticas, filosofía y compromisos.",
-            "1.2. Documento firmado por el gerente o director general.",
-            "1.6. La política es del conocimiento de todo el personal."
-        ]}
-    ];
+const CHAPTERS=[{id:"I",title:"Evaluación Preliminar de la Empresa",sections:[{id:"I.1",title:"Edificios, locales, instalaciones y áreas",qs:["Los edificios, locales, instalaciones y áreas de la empresa están en buenas condiciones.","Las características de las edificaciones e instalaciones están acordes con la actividad que se realiza.","Los pisos cuentan con superficies antideslizantes y se encuentran libres de daños.","Las paredes están pintadas en colores claros mate que contrastan con los equipos y maquinaria.","Los pasillos de tránsito están delimitados y se puede caminar con seguridad.","Las rutas y salidas de emergencia están marcadas, en buenas condiciones y sin obstrucciones.","Las áreas y patios de maniobras están delimitadas con señales y franjas.","Los desniveles, zanjas, registros y drenajes cuentan con avisos de seguridad y protecciones.","Las escaleras, escalas fijas y plataformas o pisos de trabajo elevados cuentan con protecciones y están sin deterioro."]},{id:"I.2",title:"Orden y limpieza",qs:["La empresa tiene personal de intendencia dedicado exclusivamente al orden y limpieza de las instalaciones.","En los lugares elevados está señalado que no deben colocarse materiales o herramientas que puedan caer sobre los trabajadores.","Las instalaciones y puestos de trabajo se encuentran ordenados y limpios.","Se cuenta con botes de basura y recipientes especiales para residuos reciclables y contaminantes.","Se tienen botes de basura para clasificar según tipo de desecho.","Los vestidores, casilleros y baños están ordenados y limpios.","Los sitios para tomar alimentos y áreas de descanso están ordenados y limpios.","Se cuenta con un lugar especial para disponer temporalmente de los diversos tipos de basura.","La empresa tiene instalado y funcionando un sistema contra plagas."]},{id:"I.3",title:"Sistemas contra incendio",qs:["La lista de la brigada de prevención y combate de incendios está visible.","El equipo de protección respectivo está disponible y en buenas condiciones.","Los equipos contra incendio están en su sitio y listos para el uso inmediato.","Está señalada su ubicación, en lugares de fácil acceso y sin obstrucciones.","La empresa tiene instalados detectores de humo o de calor.","Cuenta con un sistema de aspersores o de otro tipo.","Se dispone de un sistema de alarma luminosa o sonora.","Los materiales e instalaciones que tienen riesgo de incendio están identificados y señalados."]},{id:"I.4",title:"Instalaciones eléctricas",qs:["Las instalaciones eléctricas del alumbrado general tienen dispositivos de seguridad.","Las instalaciones eléctricas están fijas y entubadas y no existen conexiones provisionales.","Las líneas eléctricas se encuentran identificadas y señaladas según voltaje.","Los tableros de control cuentan con cerraduras o candados y etiquetas correspondientes.","Los equipos que producen electricidad estática están conectados a tierra.","Las áreas de alta tensión cuentan con avisos de peligro y sólo el personal autorizado tiene acceso."]},{id:"I.5",title:"Manejo, transporte y almacenamiento de materiales",qs:["La empresa tiene lugares especiales para estiba y desestiba, bien iluminados y delimitados.","Se encuentra señalada la altura máxima de estabilidad de las estibas.","Las estibas están en su almacén respectivo, ordenadas, aseguradas y a la altura correspondiente.","Los estantes de los almacenes están fijos y estables para evitar su caída.","Los recipientes fijos para almacenar líquidos corrosivos, irritantes o tóxicos tienen dispositivos de seguridad.","Los tanques y contenedores de sustancias inflamables están conectados a tierra.","Las cantidades de sustancias corrosivas, irritantes o tóxicas están limitadas para uso en un día de trabajo.","Dichas sustancias están colocadas en recipientes especiales e identificadas con avisos y señales.","Las bandas transportadoras tienen protecciones y dispositivos de paro en caso de emergencia.","Los recipientes sujetos a presión cuentan con válvulas de seguridad.","Los cilindros de gases comprimidos están separados por contenido, asegurados y con capuchón en la válvula.","Los tanques de gas estacionario están provistos de manómetros de operación y válvulas de seguridad.","Las tuberías, tanques y cilindros de gas están alejados de fuentes de calor y aislados con materiales incombustibles."]},{id:"I.6",title:"Señales, avisos de seguridad y código de colores",qs:["Para prevenir accidentes y enfermedades de trabajo se cuenta con señales y avisos de seguridad e higiene.","Dichas señales y avisos enfatizan los aspectos preventivos.","Están colocadas en lugares visibles y sitios adecuados.","Tales señalamientos se mantienen en buenas condiciones.","Se utiliza el código de colores para la identificación de fluidos conducidos en tuberías.","Se usan los colores de seguridad y de contraste.","La pintura de los puntos anteriores está en buenas condiciones."]},{id:"I.7",title:"Medio ambiente laboral",qs:["Son aceptables las condiciones en cuanto a sustancias corrosivas, reactivas, explosivas, tóxicas, inflamables y biológico-infecciosas.","Son aceptables las condiciones en cuanto a ruido.","Son aceptables las condiciones en cuanto a radiaciones ionizantes.","Son aceptables las condiciones en cuanto a radiaciones electromagnéticas no ionizantes.","Son aceptables las condiciones en cuanto a presiones ambientales anormales.","Son aceptables las condiciones en cuanto a condiciones térmicas extremas.","Son aceptables las condiciones en cuanto a ventilación (natural y artificial).","Son aceptables las condiciones en cuanto a electricidad estática.","Son aceptables las condiciones en cuanto a vibraciones.","Son aceptables las condiciones en cuanto a iluminación."]},{id:"I.8",title:"Herramientas, equipos y maquinaria",qs:["Las herramientas de mano se encuentran en buenas condiciones.","Las herramientas, enchufes y cables eléctricos están en buenas condiciones.","Las herramientas eléctricas están conectadas a tierra.","Las tomas de aire, herramientas y equipos neumáticos están en buenas condiciones.","Las máquinas y equipos con movimiento cuentan con protecciones y dispositivos de seguridad.","Los dispositivos de paro de emergencia están en lugares visibles y funcionan adecuadamente.","Los cables, cadenas, estrobos y ganchos de las grúas se encuentran en buenas condiciones.","Las plataformas de carga tienen marcada su capacidad y están en buen estado.","La planta tiene instaladas barreras contra choques.","Los equipos de soldadura y corte operan en áreas especiales y en condiciones de seguridad e higiene.","Los montacargas y grúas tienen señales de seguridad sonoras y luminosas, extintores y capacidad de carga especificada."]},{id:"I.9",title:"Equipo de protección personal (EPP)",qs:["Las áreas donde se requiere el uso del EPP están debidamente señaladas.","Los trabajadores de la empresa cuentan con el EPP específico y adecuado.","La empresa proporciona el EPP especial al personal que lo necesita.","El EPP se encuentra en condiciones adecuadas de uso.","El personal cuenta con protección auditiva en los lugares donde se requiere.","El personal cuenta con gafas, careta o lentes de seguridad en las áreas donde se necesita.","El personal cuenta con protección respiratoria en los lugares donde se requiere.","Los trabajadores cuentan con uniforme de trabajo.","Los trabajadores cuentan con calzado de seguridad apropiado.","El personal cuenta con casco de seguridad, cuando así se requiere.","Los trabajadores usan guantes, acorde a sus tareas.","El personal utiliza otra clase de EPP (especificar).","Se cuenta con lugares especiales para almacenar el EPP."]},{id:"I.10",title:"Servicios para los trabajadores",qs:["Depósitos de agua potable independientes de la reserva de agua para incendio.","Bebederos o recipientes con agua purificada y vasos higiénicos.","Vestidores con casilleros y regaderas.","Baños y casilleros limpios y en buen estado.","Comedor de la empresa limpio y en buen estado.","Áreas de descanso para los trabajadores.","Instalaciones deportivas y recreativas para el personal.","Servicio médico para los trabajadores de la empresa.","El servicio médico dispone de medicamentos, material de curación y personal de primeros auxilios."]}]},{id:"II",title:"Intervención de los Niveles Directivos",sections:[{id:"II.1",title:"Políticas de salud en el trabajo",qs:["La empresa tiene un documento que establece sus políticas, filosofía y compromisos de salud en el trabajo.","Dicho documento está firmado por el gerente o director general de la empresa.","El documento forma parte importante de los materiales de capacitación.","Está colocado en varios sitios de la empresa de fácil acceso.","Se incluye como parte integral de las normas de producción.","Es del conocimiento de todo el personal de la empresa.","El gerente o director general es el responsable directo de la difusión."]},{id:"II.2",title:"Responsable de la salud en el trabajo",qs:["La empresa tiene una persona responsable de la salud en el trabajo.","La persona responsable tiene el nivel de director o gerente.","Esta persona reporta directamente a la gerencia o dirección general.","El encargado tiene poder de decisión en los asuntos de su competencia.","El responsable tiene a su cargo un equipo conformado por médico, enfermera, ingeniero de seguridad e higiene y de medio ambiente.","La persona responsable tiene conocimientos acreditados del tema, mínimo 400 horas curriculares o grado académico.","El responsable dispone de una oficina independiente, equipada con equipo de cómputo y software adecuado.","Cuenta con una biblioteca especializada mínima relacionada con la materia."]},{id:"II.3",title:"Participación de las gerencias, jefaturas y supervisión",qs:["El gerente o director general realiza visitas y recorridos periódicos por la planta.","El gerente general lleva a cabo reuniones especiales con las gerencias, jefaturas y supervisión sobre salud en el trabajo.","El gerente general convoca y preside las reuniones especiales de salud en el trabajo.","Los gerentes, jefes y supervisión realizan recorridos mensuales para vigilar y controlar la salud en el trabajo.","Dichos mandos efectúan, por lo menos, cuatro reuniones al año con todos sus subalternos sobre salud en el trabajo.","Se tienen los registros de todas las reuniones realizadas.","La gerencia de planta u operaciones es la responsable de la elaboración de los perfiles de puesto y del trabajador.","Esta gerencia tiene a su cargo las bitácoras, registros y autorizaciones de la materia."]},{id:"II.4",title:"Planes y objetivos de salud en el trabajo",qs:["Los planes y objetivos de salud en el trabajo son establecidos de manera conjunta por las gerencias, jefaturas y supervisión.","La salud en el trabajo es una responsabilidad claramente definida para los gerentes, jefes y supervisores.","La salud en el trabajo es un concepto muy importante en la evaluación anual de las gerencias, jefaturas y supervisión.","Los planes y objetivos anuales de salud en el trabajo están redactados en forma breve, clara y precisa.","Los planes y objetivos contemplan a todas las gerencias.","Los planes y objetivos incluyen a todas las jefaturas.","Los planes y objetivos contemplan a la supervisión.","Los planes y objetivos incluyen a los trabajadores."]},{id:"II.5",title:"Programa de salud en el trabajo",qs:["La empresa tiene por escrito un programa anual de salud en el trabajo.","Dicho documento es proporcionado a todo el personal de la empresa.","El programa está colocado en lugares visibles y de fácil acceso.","Se tiene un procedimiento de revisión y actualización anual del programa.","Se cuenta con una descripción completa de todos los puestos de trabajo.","El programa contempla la elaboración del diagnóstico de las condiciones de seguridad, higiene, ecología, protección civil y servicios de salud.","El documento establece el cumplimiento de las obligaciones normativas en la materia.","El reglamento interior de trabajo especifica las medidas disciplinarias por incumplimiento del programa."]},{id:"II.6",title:"Comisión, comité y reuniones",qs:["La Comisión de Seguridad e Higiene (CSH) está registrada y funcionando.","La empresa tiene integrado un Comité Interno de Salud en el Trabajo (CIST).","Está por escrito un documento que establece la estructura, funciones y personas que integran el CIST.","Existe un registro de las reuniones de la Comisión y el Comité.","Se tiene un procedimiento para asegurar que las observaciones y recomendaciones de la CSH y el CIST se realicen.","Se llevan a cabo reuniones con los trabajadores para exponer y discutir temas de salud en el trabajo.","La exposición de los temas se fundamenta en artículos científicos recientes y la legislación vigente.","Las observaciones y recomendaciones de la CSH y el CIST se discuten en estas reuniones.","Se cuenta con instalaciones y material de apoyo adecuados para las reuniones.","Existe un formato para registrar las ideas y sugerencias del personal en materia de salud en el trabajo.","Se cuenta con un registro de las fechas, nombres, temas, resultados y acuerdos de las reuniones.","Existe un procedimiento para obtener recursos y resolver los problemas detectados en las reuniones."]},{id:"II.7",title:"Medios de información",qs:["Están en buen estado los tableros y pizarrones de información.","Los tableros y pizarrones están ubicados de tal manera que el trabajador los puede ver, por lo menos, dos veces al día.","Se utilizan carteles para mostrar los temas específicos de salud en el trabajo.","Los temas de los carteles se cambian por lo menos una vez al semestre.","Existe un programa de concursos e incentivos para los trabajadores en cuanto a salud en el trabajo.","Todo el personal de la empresa puede participar en el programa de concursos e incentivos.","Se informa a todo el personal de los resultados de los concursos y el nombre de los ganadores.","La empresa publica una revista o boletín periódico que incluye temas de salud en el trabajo.","Para promover la salud en el trabajo se cuenta con otros medios de información diferentes a los citados.","Existe un manual de consulta que contiene específicamente lo relacionado con salud en el trabajo.","La empresa tiene un compendio actualizado de la legislación vigente en materia de salud en el trabajo.","Se cuenta con una suscripción del Diario Oficial de la Federación u otro medio electrónico.","Se tiene una biblioteca de consulta abierta al personal acerca de la salud en el trabajo."]}]},{id:"III",title:"Inducción y Capacitación",sections:[{id:"III.1",title:"Inducción a la empresa",qs:["Los trabajadores de nuevo ingreso reciben un curso de inducción a la empresa.","El material de la inducción se les proporciona por escrito o en forma electrónica.","Palabras de bienvenida.","Antecedentes históricos de la empresa.","Importancia local, estatal, nacional e internacional de la empresa.","Estructura y organización de la empresa.","Descripción de los productos que elabora.","Importancia de la capacitación y desarrollo.","Contrato colectivo de trabajo.","Políticas, filosofía y compromisos de salud en el trabajo.","Servicio médico.","Esta información se actualiza y brinda al personal por lo menos cada año.","Se tienen los registros del personal que ha recibido la inducción a la empresa."]},{id:"III.2",title:"Inducción al trabajo",qs:["Los trabajadores de nuevo ingreso reciben un curso de inducción al trabajo.","La inducción se les proporciona también por escrito o en formato electrónico.","Esta inducción también se proporciona cuando los trabajadores cambian de lugar o puesto de trabajo.","El supervisor es la persona responsable de la capacitación de los trabajadores de nuevo ingreso.","Reglamento interno de salud en el trabajo.","Reglamento interior de trabajo.","Descripción del puesto de trabajo.","Procedimientos para realizar la tarea.","Métodos seguros de operación.","Reporte de riesgos presentes en el puesto de trabajo y en la empresa.","Hoja de investigación de accidentes y enfermedades de trabajo.","Uso y mantenimiento del equipo de protección personal.","Programas específicos de salud en el trabajo.","Plan de contingencias y programas de emergencia.","Esta información se actualiza y brinda al personal por lo menos cada año.","Se tienen los registros del personal que ha recibido el curso de inducción al trabajo."]},{id:"III.3",title:"Capacitación de las gerencias, jefaturas y supervisión",qs:["Todos los gerentes, jefes y supervisores de nuevo ingreso reciben un curso de capacitación en salud en el trabajo.","Inducción a la empresa.","Inducción al trabajo.","Sistema de salud laboral en la empresa.","Verificación y diagnóstico de la salud laboral en las empresas.","Otros temas (especificar).","Todos los gerentes, jefes y supervisores tienen capacitación al respecto.","Esta información se actualiza y brinda al personal por lo menos cada año.","Se tienen los registros del personal que ha recibido la capacitación.","El responsable de salud en el trabajo se capacita y actualiza periódicamente en instituciones especializadas.","El responsable de salud en el trabajo cuenta con el apoyo de la empresa para capacitarse.","El costo de la capacitación y actualización es pagado por la empresa.","En caso de requerir libros, material didáctico, transportación, alojamiento y alimentación, son pagados por la empresa.","El responsable de la salud en el trabajo cursa anualmente, por lo menos, cuarenta horas de capacitación con valor curricular."]}]},{id:"IV",title:"Seguridad e Higiene",sections:[{id:"IV.1",title:"Administración de la seguridad e higiene",qs:["La empresa tiene una persona responsable de la seguridad e higiene.","Se cuenta con un documento de la filosofía y políticas de seguridad e higiene de la empresa, firmado por la gerencia general.","Se informa y capacita a los trabajadores acerca de los riesgos de seguridad e higiene.","La seguridad e higiene forman parte sustancial de todas las operaciones del centro laboral.","Se cuenta con el diagnóstico de las condiciones de seguridad e higiene de la empresa.","Están en orden los dictámenes emitidos por las unidades de verificación.","La empresa participa en los programas preventivos de la STPS.","Los puestos de trabajo están diseñados con criterios ergonómicos.","Se tienen los registros de los monitoreos ambientales y estudios de puesto de trabajo.","Se tiene un procedimiento para corregir todos los problemas detectados en los monitoreos ambientales.","Se tienen los documentos donde están señaladas las acciones preventivas implementadas."]},{id:"IV.2",title:"Evaluación y control de la seguridad",qs:["Para todos los puestos de trabajo se tiene documentada la evaluación y control de los riesgos de seguridad.","Se cuenta con un protocolo de estudio para elaborar los métodos seguros de operación de los puestos de trabajo.","Están por escrito los métodos seguros de operación para todos los puestos de trabajo.","Se cuenta con los métodos seguros de operación de toda la empresa.","Los métodos seguros de operación son revisados y actualizados cada vez que ocurre alguna falla, accidente o se modifica el proceso.","Todos los trabajadores reciben una comunicación anual de los cambios en el puesto de trabajo.","Se tiene un formato especial para reportar los riesgos presentes en los puestos de trabajo.","El personal de supervisión, de manera conjunta con los trabajadores, elabora los reportes cada semana.","Se tiene establecido un procedimiento para verificar que los problemas se resuelvan a la brevedad.","Se revisan y actualizan las descripciones de los puestos de trabajo, por lo menos, cada semestre."]},{id:"IV.3",title:"Evaluación y control de la higiene",qs:["En todos los puestos de trabajo se realiza la evaluación y control de los riesgos de higiene.","Monitoreo ambiental: sustancias corrosivas, reactivas, explosivas, tóxicas, inflamables y biológico-infecciosas.","Monitoreo ambiental: ruido.","Monitoreo ambiental: radiaciones ionizantes.","Monitoreo ambiental: radiaciones electromagnéticas no ionizantes.","Monitoreo ambiental: presiones ambientales anormales.","Monitoreo ambiental: condiciones térmicas ambientales extremas.","Monitoreo ambiental: ventilación (oxígeno).","Monitoreo ambiental: electricidad estática.","Monitoreo ambiental: vibraciones.","Monitoreo ambiental: iluminación.","Programas específicos para prevenir exposición a riesgos físicos.","Programas específicos para prevenir exposición a riesgos químicos.","Programas específicos para prevenir exposición a riesgos biológicos.","Programas específicos para prevenir exposición a riesgos mecánicos.","Programas específicos para prevenir exposición a riesgos ergonómicos.","Programas específicos para prevenir exposición a riesgos psicosociales.","Se tiene como norma reducir la exposición de los trabajadores, mínimo, 10% por debajo de los NMP."]},{id:"IV.4",title:"Mapas de riesgo",qs:["La empresa tiene los mapas de riesgo que muestran los problemas y fallas de seguridad e higiene.","Se cuenta con los mapas de riesgo de todos los procesos de trabajo de la empresa.","Los mapas de riesgo contienen una propuesta de acciones preventivas para cada uno de los riesgos detectados.","Los métodos seguros de operación incorporan las medidas preventivas propuestas en los mapas de riesgo.","Los mapas de riesgo son elaborados por los trabajadores, previa discusión y acuerdos grupales.","Se llevan a cabo reuniones periódicas de los trabajadores y comisionados de seguridad e higiene para revisar los mapas de riesgo."]},{id:"IV.5",title:"Inspecciones de seguridad e higiene",qs:["Se tiene un formato para realizar las inspecciones internas mensuales de seguridad e higiene.","Las inspecciones son realizadas por el responsable del área y la supervisión o gerencia respectiva.","En los puestos de trabajo donde se detectan riesgos a la salud, se tiene un programa de monitoreo periódico independiente.","Se cuenta con los monitoreos de seguridad e higiene referidos.","Existe un programa de análisis de los monitoreos, para la implementación y seguimiento de las medidas de control.","Se cuenta con un archivo especial para los estudios de seguridad e higiene, donde se conservan por lo menos 30 años."]}]},{id:"V",title:"Ecología (Medio Ambiente)",sections:[{id:"V.1",title:"Administración de la ecología",qs:["La empresa tiene una persona responsable especialmente de los temas de ecología.","Se cuenta con un documento emitido y firmado por la gerencia general que contiene la filosofía y políticas de ecología.","Se informa y capacita a los trabajadores acerca de los riesgos ecológicos.","La ecología forma parte sustancial de todas las operaciones de la empresa.","Se tiene por escrito un plan para emergencias y desastres.","Existe por escrito un procedimiento para notificar a las áreas circundantes de alguna emergencia ecológica.","Para los casos de emergencia, la empresa tiene establecidos contactos con la cruz roja, hospitales, bomberos, policía y autoridades.","La empresa cuenta con la licencia ambiental única (LAU local o federal).","La empresa está afiliada al Programa Voluntario de Auditoría Ambiental.","Se cuenta con la Cédula de Operación Anual (COA).","Se tiene el Programa para la Prevención de Accidentes (PPA).","Se cuenta con la última acta de inspección de la PROFEPA.","Se tienen los registros de impacto ambiental, auditorías ambientales y análisis de riesgo.","Cumple con las recomendaciones del resolutivo en cuanto a impacto ambiental y auditorías.","Las quejas y demandas por parte de la población son atendidas y resueltas a la brevedad.","Se tienen los registros de los accidentes ambientales ocurridos con las acciones preventivas adoptadas."]},{id:"V.2",title:"Actividades de la empresa",qs:["Se tiene por escrito el número de procesos de trabajo y la relación de equipos por proceso.","Se tiene registrado el tipo de proceso (continuo o intermitente) y tiempos de operación de cada uno.","Para las materias primas se cuenta con el registro de nombre comercial y químico, consumo mensual, tipo de almacenamiento y características peligrosas.","Para los productos principales se cuenta con el registro de nombre comercial y químico, producción mensual, tipo de almacenamiento y características peligrosas.","Para los subproductos se cuenta con el registro de producción mensual, tipo de almacenamiento y características peligrosas.","Se tienen los permisos especiales de SEMARNAT para la utilización de materias primas o residuos peligrosos.","Se tienen por escrito los procedimientos de paro y arranque de la planta, tanto normal como por emergencias.","Está actualizado el registro de emisiones y transferencia de contaminantes.","La bitácora de muestreo de emisiones está actualizada.","Está al corriente la bitácora de mantenimiento de tuberías y equipo.","La bitácora de operación de los equipos está en orden."]},{id:"V.3",title:"Contaminación del aire",qs:["Están identificadas y registradas todas las fuentes generadoras de contaminantes a la atmósfera.","Se cuenta con los registros de las horas de operación de las fuentes generadoras de contaminantes.","Las chimeneas tienen plataformas y puertos de muestreo.","Se cuenta con estudios isocinéticos o de otra naturaleza.","Para los equipos de combustión se tienen los datos del tipo de quemador, combustible utilizado, consumo mensual y precalentamiento.","Están instalados aparatos o dispositivos para control de la contaminación, según contaminante específico."]},{id:"V.4",title:"Contaminación del agua",qs:["Están identificadas y registradas todas las fuentes de abastecimiento de agua, incluyendo las pluviales.","Se tienen identificadas, registradas y analizadas todas las descargas de aguas residuales de proceso.","Las aguas residuales son sometidas a tratamiento.","Se cuenta con los análisis de lodos y se disponen adecuadamente.","Está documentado que no existe contaminación de los mantos freáticos en los terrenos de la empresa."]},{id:"V.5",title:"Contaminación del suelo",qs:["Las fuentes de residuos peligrosos y no peligrosos están identificadas, registradas y se tiene un plan de manejo.","La empresa cuenta con un programa de caracterización y remediación de pasivos ambientales.","Los residuos que se generan en la empresa son sometidos a tratamiento o reciclaje.","Se cuenta con lugares especiales para el almacenamiento de residuos.","Se tienen rutas diseñadas para el transporte de los residuos hacia su disposición final.","La empresa tiene un documento de políticas y medidas para disminuir la generación de residuos peligrosos."]},{id:"V.6",title:"Formas especiales de contaminación",qs:["La empresa cuenta con las evaluaciones de ruido de fondo.","Está documentada la instalación de dispositivos para controlar el ruido.","Está registrado el uso y control de compuestos clorofluorocarbonados (CFC).","Está registrado el uso, procesamiento y control del asbesto.","Se cuenta con los registros y control de bifenilos policlorados (BPC)."]},{id:"V.7",title:"Tanques y recipientes",qs:["Los tanques de almacenamiento bajo tierra tienen: número de registro, material, localización, capacidad, tiempo de operación y contenido.","Están provistos de muros de contención con la capacidad adecuada.","Cuentan con pruebas de hermeticidad o no destructivas.","Se tienen los reportes de inspección de tanques bajo tierra.","Los tanques bajo tierra cuentan con dispositivos de seguridad.","Los tanques de almacenamiento sujetos a presión tienen: número de registro, material, localización, capacidad, tiempo de operación, contenido y presión de operación.","Cuentan con pruebas hidrostáticas o no destructivas.","Se tienen los reportes de inspección de tanques a presión.","Los tanques a presión cuentan con dispositivos de seguridad."]},{id:"V.8",title:"Servicios",qs:["Las áreas de reparaciones mecánicas y estaciones de combustible y aceite para vehículos están delimitadas y en buen estado.","Tienen contenedores contra derrame o fuga de combustibles, aceites o lubricantes.","Se cuenta con lugares específicos en patios o áreas de la empresa para la selección y almacenamiento de materiales, chatarra, residuos sólidos y basura.","Se dispone adecuadamente de los materiales, chatarra, residuos sólidos y basura.","Los pisos de los patios y áreas libres cuentan con programas de limpieza para evitar cualquier tipo de residuo."]}]},{id:"VI",title:"Servicios de Salud de los Trabajadores",sections:[{id:"VI.1",title:"Administración de la salud de los trabajadores",qs:["La empresa tiene una persona responsable especialmente de la salud de los trabajadores.","Se cuenta con un documento emitido y firmado por la gerencia general que contiene la filosofía y políticas de salud de los trabajadores.","Se informa y capacita a los trabajadores acerca de la utilización del servicio médico.","La salud de los trabajadores forma parte importante de todas las operaciones de la empresa.","La empresa participa en los programas preventivos del IMSS y la STPS.","Se tienen los registros de los exámenes médicos, psicológicos, perfil del puesto, perfil del trabajador y estudios de laboratorio.","Se cuenta con un formato para el registro diario de consultas.","Se cuenta con un formato para el registro diario de incapacidades.","Se tienen formatos para la comunicación periódica del estado de salud de la población trabajadora.","Se emiten reportes mensuales y anuales a todas las gerencias de la empresa.","Se cuenta con un programa de reubicación de los trabajadores.","Se tiene un programa de puestos de trabajo para el personal discapacitado."]},{id:"VI.2",title:"Investigación de accidentes y enfermedades de trabajo",qs:["Se cuenta con una hoja de registro para la investigación de accidentes y enfermedades de trabajo.","La investigación incluye: ubicación temporal y espacial del accidente o enfermedad laboral.","La investigación incluye: descripción y probable causa del accidente o enfermedad.","La investigación incluye: condiciones que influyeron en el evento.","La investigación incluye: acciones preventivas y correctivas adoptadas.","La investigación incluye: costo total del accidente o enfermedad laboral.","La investigación incluye: firma del gerente del área.","La investigación incluye: firma del supervisor.","La investigación incluye: firma del trabajador.","El supervisor es el responsable directo de llenar la hoja de investigación.","Los jefes respectivos participan en la investigación de accidentes y enfermedades laborales.","Se lleva a cabo una reunión mensual para discutir los accidentes, incidentes, problemas y medidas de control.","Todos los accidentes y enfermedades de trabajo se investigan, aun cuando no generen incapacidad.","Las hojas de investigación de accidentes y enfermedades se conservan en un archivo especial.","El programa de investigación de accidentes se revisa cada semestre para evaluar la calidad de los reportes y acciones preventivas."]},{id:"VI.3",title:"Servicio médico",qs:["La empresa tiene un local exclusivo y equipado para el servicio médico.","El servicio médico realiza atención primaria de accidentes, enfermedades laborales, consultas y exámenes médicos.","El servicio médico efectúa campañas preventivas de accidentes, enfermedades laborales, hipertensión, diabetes, obesidad y tabaquismo.","Se tiene el material y equipo médico necesario, de acuerdo a los problemas y padecimientos detectados.","Se cuenta con una enfermera por turno para atender a los trabajadores y las tareas administrativas.","A todo el personal se le realizan exámenes médicos y psicológicos de ingreso, periódicos y para el retiro.","El examen médico y psicológico es de acuerdo al puesto de trabajo.","Se tiene un formato de historia clínica general, que contiene la historia clínica laboral del personal.","Se cuenta con un archivo que integra todas las historias clínicas del personal de la empresa.","Audiometría.","Espirometría.","Placa de rayos X específica.","Estudios de laboratorio específicos.","Pruebas psicológicas específicas.","Se tiene un manual de procedimientos para primeros auxilios."]},{id:"VI.4",title:"Indicadores epidemiológicos",qs:["Registro: fecha y hora de consulta.","Registro: nombre del trabajador, número de tarjeta o código.","Registro: edad.","Registro: sexo.","Registro: planta, área o departamento donde labora.","Registro: puesto de trabajo o categoría.","Registro: antigüedad en el puesto y la empresa.","Registro: turno de labores.","Registro: personal sindicalizado o no sindicalizado.","Registro: personal de planta o eventual.","Registro: consulta de primera vez o subsiguiente.","Registro: motivo de la consulta.","Registro: diagnóstico.","Registro: tratamiento.","Registro: días de incapacidad.","Indicadores: razones.","Indicadores: proporciones.","Indicadores: tasas.","Indicadores: índices de frecuencia.","Indicadores: índices de gravedad.","Indicadores: índices de incapacidad parcial permanente.","Indicadores: índices de incapacidad total permanente."]},{id:"VI.5",title:"Reporte de estadísticas",qs:["El reporte cuantitativo de accidentes y enfermedades se entrega a la gerencia o dirección general.","El reporte cuantitativo de accidentes y enfermedades se entrega a otras gerencias o direcciones.","El reporte cuantitativo de accidentes y enfermedades se entrega a jefaturas.","El reporte cuantitativo de accidentes y enfermedades se entrega a supervisión.","El reporte cuantitativo de accidentes y enfermedades se entrega a la CSH.","El reporte cuantitativo de accidentes y enfermedades se entrega al CIST.","El resumen cuantitativo mensual se comunica por escrito a todo el personal.","Los costos de los accidentes y enfermedades de trabajo se informan por escrito a todo el personal.","Para informar a todo el personal, están colocadas en pizarrones las gráficas de accidentes y enfermedades laborales."]}]},{id:"VII",title:"Protección Civil",sections:[{id:"VII.1",title:"Administración de la protección civil",qs:["La empresa cuenta con una persona responsable de la protección civil.","Se tiene un documento firmado por la gerencia general que contiene la filosofía y políticas de protección civil.","Existen responsables por áreas o departamentos para apoyar el desarrollo y aplicación del plan de contingencias.","La empresa participa en los programas del SINAPROC y tiene el registro respectivo.","El plan de contingencias de la empresa está aprobado por Protección Civil de la Secretaría de Gobernación.","Se elabora anualmente un estudio para conocer las necesidades de extintores, sistemas de aspersores y equipo contra incendio.","Se elabora anualmente un estudio para sistemas detectores de humo, hidrocarburos y otras sustancias tóxicas.","Se elabora anualmente un estudio para equipos de emergencia: botiquines, respiradores, regaderas, lavaojos y camillas."]},{id:"VII.2",title:"Plan de contingencias y programas de emergencia",qs:["Se tiene por escrito un plan general y programas específicos que contemplan todas las emergencias probables.","Procedimiento de evacuación para todas las áreas.","Rutas de evacuación.","Descripción del sistema utilizado para alertar al personal.","Puntos de reunión asignados.","Procedimientos de conteo del personal.","Acciones específicas que debe realizar el personal en casos de emergencia.","Procedimiento para el control de riesgos potenciales por fenómenos naturales u originados por el hombre.","Procedimiento para la activación de alarmas.","Procedimiento de limpieza y reanudación de labores.","Procedimiento para alertar al personal de emergencias acerca de la ocurrencia de algún siniestro.","Se tiene una lista de servicios de emergencia que incluye dirección y teléfono.","Las direcciones y números telefónicos de emergencia se localizan en: conmutador.","Las direcciones y números telefónicos de emergencia se localizan en: personal de emergencias.","Las direcciones y números telefónicos de emergencia se localizan en: servicio médico.","Las direcciones y números telefónicos de emergencia se localizan en: casetas de vigilancia.","Las direcciones y números telefónicos de emergencia se localizan en: gerencias, jefaturas y supervisión."]},{id:"VII.3",title:"Brigada de emergencias",qs:["Se cuenta con un grupo o brigada de respuesta a emergencias.","Existe un programa de capacitación y adiestramiento de la brigada.","Se realizan simulacros periódicos para capacitar a la brigada en casos de fuego, explosión, fugas, derrames, inundación y sismos.","La integración y tareas de las brigadas son revisadas y modificadas cuando así lo ameritan.","Durante los simulacros participan instancias normativas para observar y calificar el desempeño de las brigadas.","Las dependencias gubernamentales específicas están notificadas de todos los materiales y condiciones peligrosas de la empresa."]},{id:"VII.4",title:"Primeros auxilios en emergencias",qs:["Por lo menos una persona capacitada en primeros auxilios atiende cada turno de trabajo.","Se tiene un procedimiento para alertar al personal de primeros auxilios cuando ocurre un siniestro.","Está colocada en un lugar visible la lista de los integrantes de la brigada de primeros auxilios.","Las personas que conforman el equipo de primeros auxilios reciben capacitación, por lo menos, cada año.","Se cuenta con una evaluación para determinar el número y lugar de ubicación de los puestos y botiquines de primeros auxilios."]}]},{id:"VIII",title:"Suministro de Materiales, Ingeniería y Mantenimiento",sections:[{id:"VIII.1",title:"Compras y selección de proveedores",qs:["Especificaciones de salud en el trabajo para la adquisición de materiales, equipos y maquinaria.","Revisión de los aspectos de salud en el trabajo que contienen los manuales y folletos del proveedor.","Revisión y aprobación del responsable de salud en el trabajo acerca de las adquisiciones de maquinaria, equipos y materiales.","Hojas de seguridad de todas las sustancias usadas en la empresa.","Requerimientos mínimos de salud en el trabajo, especificados en las cotizaciones y contratos de compra.","Reuniones con el proveedor para revisar los requisitos mínimos de salud en el trabajo.","Pruebas, por parte del proveedor, para verificar la seguridad en el producto.","La elección del producto se funda en el criterio de calidad e inocuidad para el medio ambiente y la salud de los trabajadores."]},{id:"VIII.2",title:"Nuevos proyectos y cambios en el proceso de trabajo",qs:["Se tienen criterios establecidos de salud en el trabajo para evaluar los nuevos proyectos.","La empresa tiene personal calificado para evaluar tales proyectos.","Cambios en el medio ambiente de trabajo realizados por ingeniería de construcciones, mantenimiento o ingeniería de procesos.","Todas las modificaciones efectuadas por contratistas.","Introducción de nueva tecnología.","Se cuenta con criterios establecidos de salud en el trabajo para evaluar los cambios en el proceso de trabajo.","Todos los cambios realizados por producción, mantenimiento o ingeniería de procesos.","Todos los cambios de métodos o normas de trabajo.","Importación de riesgos.","Introducción de productos contaminantes (controlados o no controlados)."]},{id:"VIII.3",title:"Mantenimiento preventivo y correctivo",qs:["Se tiene un programa de mantenimiento preventivo y correctivo, especialmente para los aspectos de salud en el trabajo.","Sistemas de protección y dispositivos de seguridad en maquinaria y equipos.","Elementos y dispositivos de seguridad en equipos para izar.","Utilización de candados y etiquetas de seguridad.","Elaboración y actualización de bitácoras.","Revisión y mantenimiento de herramientas, maquinaria y equipos.","Revisión y mantenimiento de locales e instalaciones de la empresa.","Revisión y mantenimiento de instalaciones eléctricas.","Revisión y mantenimiento de sistemas de ventilación (natural y artificial).","Revisión y mantenimiento de sistemas anticontaminantes.","Revisión, mantenimiento y reposición del EPP."]}]},{id:"IX",title:"Inspección y Auditoría",sections:[{id:"IX.1",title:"Inspecciones y auditorías internas",qs:["Se realizan inspecciones internas de salud en el trabajo.","Se lleva a cabo una inspección mensual de seguridad e higiene.","Se realiza una inspección mensual de ecología.","Se lleva a cabo una inspección mensual de protección civil.","Se efectúa una inspección mensual de bitácoras.","Se realiza una inspección mensual del comedor de la empresa.","Las inspecciones son revisadas y actualizadas periódicamente.","Se llevan a cabo auditorías internas o con auditores externos.","Los resultados de las auditorías sirven para remediar los problemas detectados.","Se realiza anualmente la verificación y diagnóstico de la salud laboral en la empresa.","Todos los problemas detectados en la verificación y diagnóstico están reportados por escrito e ilustrados con evidencia fotográfica.","Las recomendaciones de la verificación y diagnóstico se utilizan para solucionar los problemas detectados.","El documento para la verificación y diagnóstico es revisado cada año."]},{id:"IX.2",title:"Comunicación de condiciones peligrosas",qs:["La empresa tiene un programa de comunicación de condiciones peligrosas.","El programa motiva al personal a reportar las condiciones peligrosas de su puesto de trabajo o de otras áreas.","Se cuenta con un formato para la comunicación de condiciones peligrosas.","Los reportes de las condiciones peligrosas se mantienen en un archivo de consulta.","La CSH y CIST se encargan de informar al personal de las condiciones peligrosas existentes.","Las condiciones peligrosas se encuentran ilustradas en mapas de riesgo por cada proceso de trabajo.","Los mapas de riesgo están a la disposición del personal para su consulta."]},{id:"IX.3",title:"Acciones preventivas y correctivas",qs:["Se tiene un procedimiento para asegurar que todas las condiciones peligrosas y problemas detectados sean corregidas.","Están por escrito los reportes de las acciones que se realizan para eliminar o disminuir los problemas observados.","Se comunica por escrito a la gerencia general el resultado de las inspecciones y auditorías, con énfasis en las acciones preventivas.","La CSH y el CIST son informados por escrito de las acciones correctivas y preventivas realizadas."]}]},{id:"X",title:"Marco Legal, Metodologías de Estudio y Programas Preventivos",sections:[{id:"X.1",title:"Marco legal de la seguridad e higiene",qs:["Representante legal de la empresa: poder notarial e identificación.","Secretario general del sindicato: toma de nota e identificación.","Representantes de la CSH: acreditaciones e identificaciones.","Representantes de la Comisión Mixta de Capacitación y Adiestramiento: acreditaciones e identificaciones.","Dos testigos de asistencia: identificaciones y domicilios.","Actividad real de la empresa en el domicilio visitado.","Registro Federal de Contribuyentes (RFC).","Registro patronal ante el IMSS, con clase y prima de riesgo.","Tipo de establecimiento (planta industrial, bodega, oficinas, etc.).","Total de trabajadores desglosado por sexo, sindicalizados, confianza, eventuales, menores, mujeres en gestación o lactancia y discapacitados.","Rama industrial.","Superficie y dimensiones aproximadas del centro de trabajo.","Declaración del último ejercicio fiscal.","Descripción del proceso: materias primas.","Descripción del proceso: proceso.","Descripción del proceso: productos y subproductos obtenidos.","Descripción del proceso: desechos y residuos.","Montacargas, grúas, generadores de vapor, recipientes sujetos a presión y demás maquinaria y equipos.","Disposiciones en materia de seguridad e higiene en el reglamento interior de trabajo.","Estudio para la determinación del grado de riesgo de incendio o explosión.","Programa de prevención, protección y combate contra incendio.","Constancia de capacitación y adiestramiento para la prevención y combate contra incendio.","Plan de emergencia para evacuación en caso de incendio.","Procedimientos de operación y seguridad para prevenir riesgos de incendio.","Relación y tipo del equipo contra incendio, revisión, recarga y señalamientos.","Constancia de la organización de las brigadas contra incendio.","Salidas de emergencia adecuadas para personas discapacitadas.","Prácticas de simulacros contra incendio, cuando menos una vez al año.","Autorización provisional o última acta de inspección de generadores de vapor y recipientes a presión.","Registro de antecedentes de alteraciones, reparaciones y modificaciones de los equipos.","Programa de seguridad e higiene para la operación y mantenimiento de las partes móviles de la maquinaria.","Manuales de instalación, operación, mantenimiento y procedimientos de seguridad para la maquinaria.","Antecedentes de alteraciones, reparaciones, modificaciones y condiciones de operación de RSP y GV.","Procedimientos necesarios para la atención de emergencias en maquinaria y equipo.","Registro semestral de los valores medidos de resistencia eléctrica.","Instrucciones por escrito para la utilización y control de las herramientas.","Requerimientos de seguridad e higiene para el manejo, transporte, proceso y almacenamiento de materiales peligrosos.","Relación del personal autorizado para llevar a cabo actividades de manejo, transporte y almacenamiento de materiales peligrosos.","Estudio de las actividades de manejo, transporte y almacenamiento de materiales cuando se realice en forma manual.","Registro de mantenimiento de los sistemas y equipos de manejo, transporte y almacenamiento automático.","Hojas de seguridad de los materiales y las sustancias químicas peligrosas.","Programa de seguridad e higiene para el transporte de materiales y sustancias químicas peligrosas.","Manual de procedimientos para la estiba y desestiba de materiales.","Manuales de procedimientos de seguridad e higiene para almacenamiento y manejo de sustancias corrosivas, irritantes, tóxicas, inflamables y explosivas.","Procedimiento para trabajos peligrosos con sustancias corrosivas, irritantes y tóxicas.","Programa de seguridad e higiene para ruido y vibraciones.","Evaluación de ruido y vibraciones.","Exámenes médicos (ruido y vibraciones).","Autorización de la CNNS para fuentes de radiaciones ionizantes.","Registros de reconocimiento, evaluación y control de radiaciones ionizantes y electromagnéticas no ionizantes.","Exámenes médicos (radiaciones).","Evaluación de sustancias químicas.","Programa de seguridad e higiene para sustancias químicas contaminantes.","Exámenes médicos (sustancias químicas).","Programa de seguridad e higiene para agentes contaminantes biológicos.","Registro del personal autorizado para manejo de agentes biológicos.","Exámenes médicos (agentes biológicos).","Programa de seguridad e higiene para presiones ambientales anormales.","Reconocimiento, evaluación y control de las presiones ambientales anormales.","Exámenes médicos (presiones ambientales).","Programa de seguridad e higiene para condiciones térmicas.","Exámenes médicos (condiciones térmicas).","Estudio de iluminación en áreas con iluminación deficiente.","Exámenes médicos para actividades que requieren iluminación especial.","Programa de verificación y mantenimiento preventivo para los sistemas de ventilación artificial.","Estudio y análisis de riesgos para la selección del EPP.","Documento de compra del calzado de protección que especifica cumplimiento con la NOM-113-STPS-2009.","Acta de integración de la Comisión de Seguridad e Higiene.","Publicación de la relación actualizada de los integrantes de la CSH.","Programación anual de verificaciones.","Actas de verificación de doce meses a la fecha.","Avisos de los accidentes de trabajo ocurridos.","Estadísticas de los accidentes y enfermedades de trabajo y constancia de aviso a los trabajadores y a la CSH.","Diagnóstico de las condiciones de seguridad e higiene.","Programa de seguridad e higiene en el trabajo (general).","Documento que acredite que el patrón dio a conocer a los trabajadores el programa.","Relación de medidas preventivas generales y específicas (para empresas de menos de 100 trabajadores).","Planes y programas aprobados por la STPS para capacitar a los trabajadores.","Constancias de habilidades laborales del personal encargado del manejo de montacargas, grúas, calderas y materiales peligrosos.","Constancias de habilidades laborales para el uso, cuidado, mantenimiento y almacenamiento de herramientas.","Constancias de habilidades laborales acerca del uso, conservación y mantenimiento del EPP.","Constancias de habilidades laborales para la ejecución del programa de seguridad e higiene.","Constancias de habilidades laborales de los responsables de los servicios preventivos de medicina en el trabajo.","Constancias de habilidades laborales del personal que realice tareas de operación y mantenimiento de instalaciones eléctricas.","Constancias de habilidades laborales del personal que realice labores de limpieza.","Médico de la empresa: nombre, nacionalidad y cédula profesional.","Manual de procedimientos para prestar los primeros auxilios.","Revisión del trabajo de las mujeres gestantes o en periodo de lactancia.","Revisión del trabajo de menores.","Recorrido por las instalaciones para detectar actos o condiciones inseguras.","Interrogatorio a trabajadores.","Manifestaciones de las partes. Cierre del acta, lectura y firmas."]},{id:"X.2",title:"Marco legal de la ecología (medio ambiente)",qs:["Acreditación de los inspectores (carta credencial).","Nombre de los inspectores que realizaron la diligencia.","Razón social o nombre del propietario de la empresa.","Domicilio del establecimiento.","El motivo de la visita de inspección.","Fundamento legal para realizar la visita de inspección.","Firma del titular de la dependencia de la Procuraduría que ordenó la inspección.","Citatorio (en su caso).","Lugar de la visita de inspección.","Hora y fecha en que se realiza la visita de inspección.","Nombre y número de carta credencial de los inspectores.","Razón social y ubicación exacta del establecimiento.","Teléfono, fax, registro federal de contribuyentes.","Nombre y cargo de la persona que atiende la diligencia.","Nombre y domicilio de los testigos.","Actividad de la empresa.","Número de empleados y obreros con que cuenta la empresa.","Hechos encontrados durante la visita de inspección.","Manifestaciones de la persona encargada de la diligencia.","Número de fojas útiles.","Firma de las personas que intervinieron en la diligencia.","Licencia de funcionamiento.","Inventario de emisiones.","Autorización en materia de impacto ambiental (empresas instaladas a partir de 1988).","Registro como generador de residuos peligrosos (guías ecológicas).","Manifiestos de generación de residuos peligrosos.","Bitácora de operación del equipo de control y proceso y de la generación y disposición de residuos peligrosos.","Manifiestos de entrega, transporte y recepción de residuos.","Evaluación de emisiones a la atmósfera.","Concordancia de la licencia de funcionamiento con el equipo y procesos instalados.","Cumplimiento de las condiciones en materia de impacto ambiental.","Existencia de sistemas de captación y emisión de contaminantes acordes con la normatividad.","Existencia de plataformas y puertos de muestreo.","Existencia de equipos de control y operación adecuada del envasado, etiquetado, almacenamiento y disposición final de residuos peligrosos.","Medición de niveles de ruido.","Cantidad y calidad de las emisiones a la atmósfera.","Cantidad y características de los residuos peligrosos."]},{id:"X.3",title:"Marco legal de la protección civil",qs:["Formato de datos generales de la empresa.","Croquis que especifica la ubicación del inmueble y sus alrededores.","Croquis o planos de la descripción de las áreas existentes en el inmueble.","Organigrama del Comité Interno de Protección Civil.","Documento de integración del Comité Interno de Protección Civil.","Evaluación y análisis de riesgos.","Croquis que muestra las rutas de evacuación.","Croquis con la distribución de equipo contra incendio y señalización.","Brigadas existentes en el inmueble.","Código de colores para la identificación de las brigadas.","Cronograma y bitácora del Programa de Capacitación.","Registro del mantenimiento y control del equipo de prevención y combate de incendios.","Cronograma y bitácora de mantenimiento.","Cronograma y bitácora de simulacros.","Croquis de ubicación de los equipos de primeros auxilios.","Planes, manuales y procedimientos de actuación por tipo de riesgo.","Croquis y descripción de los sistemas de alerta.","Planes, manuales y procedimientos de restablecimiento.","Visto bueno de seguridad y operación (cuando así lo estipule la normatividad).","Copia de la póliza de seguro (cuando la actividad sea de mediano o alto riesgo).","Copia de la autorización de la STPS para recipientes sujetos a presión, generadores de vapor o calderas.","Copia del estudio de impacto ambiental (empresas obligadas por la Ley Ambiental).","Copia del Cuestionario de Autodiagnóstico en materia de Protección Civil.","Copia del cuestionario para la clasificación del grado de riesgo de las empresas."]},{id:"X.4",title:"Metodologías de estudio",qs:["Está implementado en la empresa un sistema integral de salud en el trabajo.","Para evaluar temas que no incluye la legislación laboral vigente, se utilizan referencias de otros países (OSHA, NIOSH, EPA, UE).","Se utiliza el Análisis Ergonómico de Puestos de Trabajo.","Se aplica una metodología para evaluar la salud mental en el trabajo.","Se aplica el Análisis Psicológico del Trabajo (APT).","Se utilizan los mapas de riesgo para ubicar los riesgos y exigencias de los procesos de trabajo.","Se utiliza el modelo PROVERIFICA para medir la salud laboral de la empresa.","Se utiliza el PROESSAT para evaluar la salud de los trabajadores.","Se utiliza la norma internacional ISO-9001.","Se utiliza la norma internacional ISO-14001.","Se aplica la norma internacional ISO-26001.","Se aplica la norma internacional ISO-45001.","Otras metodologías de estudio (especificar)."]},{id:"X.5",title:"Programas preventivos",qs:["Programa de equipo de protección personal (EPP).","Programa de conservación de la audición.","Programa de protección de columna.","Programa de protección respiratoria.","Programa de protección dermatológica.","Programa preventivo de contaminantes biológicos.","Programa preventivo de exposición a químicos.","Programa preventivo de exposición a neurotóxicos.","Programa de ergonomía en el puesto de trabajo.","Programa de sistemas de protección y dispositivos de seguridad.","Programa de candados y etiquetas.","Programa de seguridad eléctrica.","Programa de seguridad para trabajo en espacios confinados.","Programa de seguridad para trabajo en montacargas y grúas.","Programa de seguridad para trabajo en vehículos automotores.","Programa de seguridad para trabajo en prensas, troqueles, guillotinas y roladoras.","Programa de regaderas y lavaojos de emergencia.","Programa de señales y avisos de seguridad.","Programa de seguridad para trabajo en grúas y equipo para izar.","Programa de comunicación de riesgos presentes en el trabajo.","Programa de seguridad para trabajo en máquinas-herramientas.","Programa de seguridad para trabajo en máquinas y equipos.","Programa de utilización del tiempo libre.","Otros programas preventivos (especificar)."]}]}];
 
-    function generarApp() {
-        datosCuestionario.forEach(sec => {
-            const container = document.getElementById(sec.seccion);
-            sec.preguntas.forEach((txt, index) => {
-                const row = document.createElement('div');
-                row.className = 'pregunta-row';
-                row.innerHTML = `
-                    <div class="texto-pregunta">${txt}</div>
-                    <div class="options">
-                        <button class="btn-check btn-si" onclick="setVal(this, 1)">SÍ</button>
-                        <button class="btn-check btn-pm" onclick="setVal(this, 0.5)">PM</button>
-                        <button class="btn-check btn-no" onclick="setVal(this, 0)">NO</button>
-                        <button class="btn-check btn-na" onclick="setVal(this, null)">NA</button>
-                    </div>
-                `;
-                container.appendChild(row);
-            });
-        });
-    }
+const answers={};
+CHAPTERS.forEach(ch=>ch.sections.forEach(sec=>{answers[sec.id]=new Array(sec.qs.length).fill(null)}));
 
-    function setVal(btn, val) {
-        const parent = btn.parentElement;
-        Array.from(parent.children).forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        calcularResultados();
-    }
+function scoreSection(secId){
+  const ans=answers[secId];
+  const total=ans.length;
+  const si=ans.filter(a=>a==='SI').length;
+  const pm=ans.filter(a=>a==='PM').length;
+  const no=ans.filter(a=>a==='NO').length;
+  const na=ans.filter(a=>a==='NA').length;
+  const ap=total-na;
+  if(ap===0)return{total,si,pm,no,na,pct:null,color:'pending',label:'Sin datos'};
+  const pct=Math.round(((si+pm*0.5)/ap)*100);
+  let color,label;
+  if(pct>=80){color='green';label='Cumple';}
+  else if(pct>=50){color='yellow';label='Cumple Parcialmente';}
+  else{color='red';label='No Cumple';}
+  return{total,si,pm,no,na,pct,color,label};
+}
 
-    function calcularResultados() {
-        const botonesActivos = document.querySelectorAll('.btn-check.active');
-        let totalPuntos = 0;
-        let totalEvaluados = 0;
+function scoreChapter(chId){
+  const ch=CHAPTERS.find(c=>c.id===chId);
+  let si=0,pm=0,no=0,na=0,total=0;
+  ch.sections.forEach(sec=>{const s=scoreSection(sec.id);total+=s.total;si+=s.si;pm+=s.pm;no+=s.no;na+=s.na;});
+  const ap=total-na;
+  if(ap===0)return{total,si,pm,no,na,pct:null,color:'pending',label:'Sin datos'};
+  const pct=Math.round(((si+pm*0.5)/ap)*100);
+  let color,label;
+  if(pct>=80){color='green';label='Cumple';}
+  else if(pct>=50){color='yellow';label='Cumple Parcialmente';}
+  else{color='red';label='No Cumple';}
+  return{total,si,pm,no,na,pct,color,label};
+}
 
-        botonesActivos.forEach(btn => {
-            const text = btn.innerText;
-            if (text !== 'NA') {
-                totalEvaluados++;
-                if (text === 'SÍ') totalPuntos += 1;
-                if (text === 'PM') totalPuntos += 0.5;
-            }
-        });
+function buildAll(){
+  buildTabs();
+  buildChapters();
+}
 
-        const porcentaje = totalEvaluados > 0 ? Math.round((totalPuntos / totalEvaluados) * 100) : 0;
-        const scoreEl = document.getElementById('score');
-        scoreEl.innerText = porcentaje + '%';
+function buildTabs(){
+  const nav=document.getElementById('nav-tabs');
+  nav.innerHTML='';
+  CHAPTERS.forEach((ch,i)=>{
+    const btn=document.createElement('button');
+    btn.className='tab-btn'+(i===0?' active':'');
+    btn.id=`tab-${ch.id}`;
+    btn.textContent=`${ch.id}`;
+    btn.title=ch.title;
+    btn.onclick=()=>switchTab(ch.id);
+    nav.appendChild(btn);
+  });
+  // results btn
+  const rb=document.createElement('button');
+  rb.className='tab-btn';rb.id='tab-results';rb.textContent='📊 Resultados';
+  rb.onclick=showResults;nav.appendChild(rb);
+}
 
-        const riesgoEl = document.getElementById('nivel-riesgo');
-        if (porcentaje >= 90) {
-            scoreEl.style.color = 'var(--cumple)';
-            riesgoEl.innerText = "Nivel de Riesgo: BAJO";
-        } else if (porcentaje >= 70) {
-            scoreEl.style.color = 'var(--parcial)';
-            riesgoEl.innerText = "Nivel de Riesgo: MEDIO";
-        } else {
-            scoreEl.style.color = 'var(--nocumple)';
-            riesgoEl.innerText = "Nivel de Riesgo: ALTO";
-        }
-    }
+function switchTab(chId){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.chapter-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById(`tab-${chId}`).classList.add('active');
+  document.getElementById(`ch-${chId}`).classList.add('active');
+  document.getElementById('results-panel').style.display='none';
+}
 
-    generarApp();
+function buildChapters(){
+  const container=document.getElementById('chapters-container');
+  container.innerHTML='';
+  CHAPTERS.forEach((ch,ci)=>{
+    const panel=document.createElement('div');
+    panel.className='chapter-panel'+(ci===0?' active':'');
+    panel.id=`ch-${ch.id}`;
+    let html=`<div class="ch-header"><div class="ch-num">${ch.id}</div><div><div class="ch-title">${ch.title}</div><div class="ch-sub">${ch.sections.length} apartados · ${ch.sections.reduce((a,s)=>a+s.qs.length,0)} preguntas</div></div></div>`;
+    ch.sections.forEach((sec,si)=>{
+      html+=`<div class="section"><div class="sec-header" onclick="toggleSec('${sec.id}')"><div class="sec-title"><div class="sec-num">${si+1}</div>${sec.title}</div><div style="display:flex;align-items:center;gap:8px"><span class="sec-badge pending" id="badge-${sec.id}">Pendiente</span><span class="sec-arrow" id="arrow-${sec.id}">▼</span></div></div><div class="sec-body" id="body-${sec.id}">${buildSecBody(sec)}</div></div>`;
+    });
+    // chapter summary
+    html+=`<div class="ch-summary" style="margin-top:16px"><table><thead><tr><th>Apartado</th><th>Total</th><th style="color:var(--green-tx)">SÍ</th><th style="color:var(--yellow-tx)">PM</th><th style="color:var(--red-tx)">NO</th><th>N/A</th><th>% Eficacia</th><th>Nivel</th></tr></thead><tbody id="sumtb-${ch.id}">${buildChRows(ch)}</tbody></table></div>`;
+    panel.innerHTML=html;
+    container.appendChild(panel);
+  });
+}
+
+function buildSecBody(sec){
+  let h=`<div class="q-header-row"><span>Criterio</span><span style="color:var(--green-tx)">SÍ</span><span style="color:var(--yellow-tx)">PM</span><span style="color:var(--red-tx)">NO</span><span>N/A</span></div>`;
+  sec.qs.forEach((q,qi)=>{
+    h+=`<div class="q-row"><div class="q-text"><span class="q-code">${qi+1}.</span>${q}</div><div class="q-cell"><div class="radio-opt" id="opt-${sec.id}-${qi}-SI" onclick="setAns('${sec.id}',${qi},'SI')">SÍ</div></div><div class="q-cell"><div class="radio-opt" id="opt-${sec.id}-${qi}-PM" onclick="setAns('${sec.id}',${qi},'PM')">PM</div></div><div class="q-cell"><div class="radio-opt" id="opt-${sec.id}-${qi}-NO" onclick="setAns('${sec.id}',${qi},'NO')">NO</div></div><div class="q-cell"><div class="radio-opt" id="opt-${sec.id}-${qi}-NA" onclick="setAns('${sec.id}',${qi},'NA')">N/A</div></div></div>`;
+  });
+  h+=`<div class="sec-totals" id="totals-${sec.id}"><div class="tot-item"><div class="tot-val" id="t-total-${sec.id}">${sec.qs.length}</div><div class="tot-lbl">Total</div></div><div class="tot-item t-si"><div class="tot-val" id="t-si-${sec.id}">0</div><div class="tot-lbl">SÍ</div></div><div class="tot-item t-pm"><div class="tot-val" id="t-pm-${sec.id}">0</div><div class="tot-lbl">PM</div></div><div class="tot-item t-no"><div class="tot-val" id="t-no-${sec.id}">0</div><div class="tot-lbl">NO</div></div><div class="tot-item t-pct"><div class="tot-val" id="t-pct-${sec.id}">—</div><div class="tot-lbl">% Eficacia</div></div></div><div class="pbar-wrap"><div class="pbar pending" id="pbar-${sec.id}" style="width:0%"></div></div><div id="nivel-${sec.id}" class="nivel-badge pending">⏳ Pendiente de evaluación</div><textarea class="obs-field" placeholder="Observaciones del apartado..." id="obs-${sec.id}"></textarea>`;
+
+return h;
+}
+
+function buildChRows(ch){
+let h=’’;
+ch.sections.forEach(sec=>{
+const s=scoreSection(sec.id);
+h+=`<tr><td>${sec.title}</td><td>${s.total}</td><td style="color:var(--green-tx)">${s.si}</td><td style="color:var(--yellow-tx)">${s.pm}</td><td style="color:var(--red-tx)">${s.no}</td><td style="color:var(--muted)">${s.na}</td><td><span class="td-pct ${s.color}">${s.pct!==null?s.pct+'%':'—'}</span></td><td><span class="sec-badge ${s.color}">${s.label}</span></td></tr>`;
+});
+return h;
+}
+
+function toggleSec(secId){
+const b=document.getElementById(`body-${secId}`);
+const a=document.getElementById(`arrow-${secId}`);
+const o=b.classList.contains(‘open’);
+b.classList.toggle(‘open’,!o);a.classList.toggle(‘open’,!o);
+}
+
+function setAns(secId,qi,val){
+answers[secId][qi]=val;
+[‘SI’,‘PM’,‘NO’,‘NA’].forEach(opt=>{
+const el=document.getElementById(`opt-${secId}-${qi}-${opt}`);
+if(!el)return;
+el.className=‘radio-opt’;
+if(opt===val)el.classList.add(`sel-${opt.toLowerCase()}`);
+});
+updateScore(secId);
+}
+
+function updateScore(secId){
+const s=scoreSection(secId);
+document.getElementById(`t-si-${secId}`).textContent=s.si;
+document.getElementById(`t-pm-${secId}`).textContent=s.pm;
+document.getElementById(`t-no-${secId}`).textContent=s.no;
+document.getElementById(`t-pct-${secId}`).textContent=s.pct!==null?s.pct+’%’:’—’;
+const pb=document.getElementById(`pbar-${secId}`);
+pb.style.width=(s.pct||0)+’%’;pb.className=`pbar ${s.color}`;
+const niv=document.getElementById(`nivel-${secId}`);
+const ico={green:‘✔’,yellow:‘◑’,red:‘✘’,pending:‘⏳’};
+niv.className=`nivel-badge ${s.color}`;
+niv.textContent=`${ico[s.color]} ${s.label}${s.pct!==null?' — '+s.pct+'% de Eficacia':''}`;
+const bdg=document.getElementById(`badge-${secId}`);
+bdg.className=`sec-badge ${s.color}`;
+bdg.textContent=s.pct!==null?s.pct+’%’:s.label;
+const ch=CHAPTERS.find(c=>secId.startsWith(c.id+’.’));
+if(ch){const tb=document.getElementById(`sumtb-${ch.id}`);if(tb)tb.innerHTML=buildChRows(ch);}
+}
+
+function showResults(){
+document.querySelectorAll(’.tab-btn’).forEach(b=>b.classList.remove(‘active’));
+document.getElementById(‘tab-results’).classList.add(‘active’);
+document.querySelectorAll(’.chapter-panel’).forEach(p=>p.classList.remove(‘active’));
+document.getElementById(‘results-panel’).style.display=‘block’;
+let tsi=0,tpm=0,tno=0,tna=0,tall=0;
+const chData=CHAPTERS.map(ch=>{const s=scoreChapter(ch.id);tsi+=s.si;tpm+=s.pm;tno+=s.no;tna+=s.na;tall+=s.total;return{ch,s};});
+const ap=tall-tna;
+const gp=ap>0?Math.round(((tsi+tpm*0.5)/ap)*100):null;
+let gc=‘pending’,gl=‘Sin datos’;
+if(gp!==null){if(gp>=80){gc=‘green’;gl=‘Cumple’;}else if(gp>=50){gc=‘yellow’;gl=‘Cumple Parcialmente’;}else{gc=‘red’;gl=‘No Cumple’;}}
+const emp=document.getElementById(‘empresa’).value||‘Empresa’;
+const fec=document.getElementById(‘fecha’).value||’—’;
+document.getElementById(‘big-summary’).innerHTML=` <div class="big-card" style="grid-column:span 4;border:2px solid var(--${gc==='pending'?'border':gc+'-bd'});box-shadow:0 0 28px var(--${gc==='pending'?'border':gc+'-glow'})"> <div style="font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px">${emp} — ${fec}</div> <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:52px;color:var(--${gc==='pending'?'muted':gc+'-tx'})">${gp!==null?gp+'%':'—'}</div> <div style="font-family:'Syne',sans-serif;font-size:15px;color:var(--${gc==='pending'?'muted':gc+'-tx'});margin-top:4px">${gl}</div> <div style="font-size:10px;color:var(--muted);margin-top:6px">Porcentaje Global de Eficacia PROVERIFICA®</div> </div> <div class="big-card b-total"><div class="big-val">${tall}</div><div class="big-lbl">Total Criterios</div></div> <div class="big-card b-green"><div class="big-val">${tsi}</div><div class="big-lbl">SÍ Cumplen</div></div> <div class="big-card b-yellow"><div class="big-val">${tpm}</div><div class="big-lbl">Parcialmente</div></div> <div class="big-card b-red"><div class="big-val">${tno}</div><div class="big-lbl">No Cumplen</div></div>`;
+let rows=’’;
+chData.forEach(({ch,s})=>{rows+=`<tr><td style="font-family:'Syne',sans-serif;font-weight:600">${ch.id}. ${ch.title}</td><td>${s.total}</td><td style="color:var(--green-tx)">${s.si}</td><td style="color:var(--yellow-tx)">${s.pm}</td><td style="color:var(--red-tx)">${s.no}</td><td style="color:var(--muted)">${s.na}</td><td><span class="pct-cell ${s.color}">${s.pct!==null?s.pct+'%':'—'}</span></td><td><span class="sec-badge ${s.color}">${s.label}</span></td></tr>`;});
+document.getElementById(‘res-table’).innerHTML=`<table><thead><tr><th>Capítulo</th><th>Total</th><th>SÍ</th><th>PM</th><th>NO</th><th>N/A</th><th>% Eficacia</th><th>Nivel</th></tr></thead><tbody>${rows}</tbody></table>`;
+document.getElementById(‘results-panel’).scrollIntoView({behavior:‘smooth’});
+}
+
+function resetAll(){
+if(!confirm(’¿Reiniciar todo el cuestionario? Se perderán todas las respuestas.’))return;
+CHAPTERS.forEach(ch=>ch.sections.forEach(sec=>{answers[sec.id]=new Array(sec.qs.length).fill(null);}));
+buildAll();
+document.getElementById(‘results-panel’).style.display=‘none’;
+}
+
+function setToday(){
+document.getElementById(‘fecha’).value=new Date().toISOString().split(‘T’)[0];
+}
+
+buildAll();setToday();
 </script>
 
 </body>
