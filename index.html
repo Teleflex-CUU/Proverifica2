@@ -81,13 +81,22 @@
         <div class="nav-tab" onclick="switchMainView('view-dash')">📊 DASHBOARD</div>
     </nav>
 
-    <div id="view-cige" class="view-panel active">
+   <div id="view-cige" class="view-panel active">
         <div class="card">
             <h2 style="font-family:'Syne'; margin-bottom:20px;">Datos Generales (CIGE)</h2>
             <div class="grid-form">
-                <div><label>Empresa</label><input type="text" id="cige-empresa" oninput="saveAll()"></div>
-                <div><label>Fecha</label><input type="date" id="cige-fecha" oninput="saveAll()"></div>
-                <div><label>Auditor</label><input type="text" id="cige-auditor" oninput="saveAll()"></div>
+                <div><label>Razón Social / Nombre Comercial</label><input type="text" id="cige-razon-social" oninput="saveAll()"></div>
+                <div><label>R.F.C.</label><input type="text" id="cige-rfc" oninput="saveAll()"></div>
+                <div><label>Registro Patronal</label><input type="text" id="cige-registro-patronal" oninput="saveAll()"></div>
+                <div style="grid-column: 1 / -1;"><label>Domicilio (Calle, No., Col., Mun., C.P., Estado)</label><input type="text" id="cige-domicilio" oninput="saveAll()"></div>
+                <div><label>Giro de la Empresa</label><input type="text" id="cige-giro" oninput="saveAll()"></div>
+                <div><label>Representante Legal</label><input type="text" id="cige-representante" oninput="saveAll()"></div>
+                <div><label>Sindicato Titular</label><input type="text" id="cige-sindicato" oninput="saveAll()"></div>
+                <div><label>Plantilla Total de Trabajadores</label><input type="number" id="cige-plantilla" oninput="saveAll()"></div>
+                <div><label>Número de Turnos</label><input type="text" id="cige-turnos" oninput="saveAll()"></div>
+                <div><label>Clase de Riesgo de Trabajo</label><input type="text" id="cige-clase-riesgo" oninput="saveAll()"></div>
+                <div><label>Fecha de Auditoría</label><input type="date" id="cige-fecha" oninput="saveAll()"></div>
+                <div><label>Auditó</label><input type="text" id="cige-auditor" oninput="saveAll()"></div>
             </div>
         </div>
     </div>
@@ -267,19 +276,42 @@ function updateDashboard() {
 }
 
 function saveAll() {
-    state.cige.empresa = document.getElementById('cige-empresa').value;
+    state.cige.razonSocial = document.getElementById('cige-razon-social').value;
+    state.cige.rfc = document.getElementById('cige-rfc').value;
+    state.cige.registroPatronal = document.getElementById('cige-registro-patronal').value;
+    state.cige.domicilio = document.getElementById('cige-domicilio').value;
+    state.cige.giro = document.getElementById('cige-giro').value;
+    state.cige.representante = document.getElementById('cige-representante').value;
+    state.cige.sindicato = document.getElementById('cige-sindicato').value;
+    state.cige.plantilla = document.getElementById('cige-plantilla').value;
+    state.cige.turnos = document.getElementById('cige-turnos').value;
+    state.cige.claseRiesgo = document.getElementById('cige-clase-riesgo').value;
     state.cige.fecha = document.getElementById('cige-fecha').value;
     state.cige.auditor = document.getElementById('cige-auditor').value;
     localStorage.setItem('proverifica_full_v10', JSON.stringify(state));
+}
 }
 
 function loadLocal() {
     const data = localStorage.getItem('proverifica_full_v10');
     if(data) {
         state = JSON.parse(data);
-        document.getElementById('cige-empresa').value = state.cige.empresa || '';
+        if(!state.cige) state.cige = {}; // Asegurar que el objeto existe
+        
+        document.getElementById('cige-razon-social').value = state.cige.razonSocial || '';
+        document.getElementById('cige-rfc').value = state.cige.rfc || '';
+        document.getElementById('cige-registro-patronal').value = state.cige.registroPatronal || '';
+        document.getElementById('cige-domicilio').value = state.cige.domicilio || '';
+        document.getElementById('cige-giro').value = state.cige.giro || '';
+        document.getElementById('cige-representante').value = state.cige.representante || '';
+        document.getElementById('cige-sindicato').value = state.cige.sindicato || '';
+        document.getElementById('cige-plantilla').value = state.cige.plantilla || '';
+        document.getElementById('cige-turnos').value = state.cige.turnos || '';
+        document.getElementById('cige-clase-riesgo').value = state.cige.claseRiesgo || '';
         document.getElementById('cige-fecha').value = state.cige.fecha || '';
         document.getElementById('cige-auditor').value = state.cige.auditor || '';
+    }
+}
     }
 }
 
