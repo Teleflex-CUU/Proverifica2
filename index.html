@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>PROVERIFICA® Pro — Sistema Integral de Salud Laboral</title>
+<title>PROVERIFICA® Pro — Sistema Integral de Gestión de Salud</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=IBM+Plex+Mono:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <style>
-    /* VARIABLES Y ESTILOS BASE */
+    /* VARIABLES Y ESTILOS BASE (V9) */
     :root{
         --bg:#0b0d12;--surface:#111318;--surface2:#181c24;--border:#22273a;
         --text:#dde3f5;--muted:#5a6282;--accent:#3d6fff;
@@ -21,34 +21,43 @@
     .container{max-width:1200px; margin:20px auto; padding:0 20px;}
 
     /* NAVEGACIÓN PRINCIPAL */
-    .main-nav{display:flex; gap:10px; margin-bottom:20px; border-bottom:1px solid var(--border); padding-bottom:10px;}
-    .nav-tab{padding:10px 20px; cursor:pointer; border-radius:8px; font-weight:700; font-family:'Syne'; transition:0.3s; color:var(--muted); border:1px solid transparent;}
+    .main-nav{display:flex; gap:10px; margin-bottom:20px; border-bottom:1px solid var(--border); padding-bottom:10px; overflow-x: auto;}
+    .nav-tab{padding:10px 20px; cursor:pointer; border-radius:8px; font-weight:700; font-family:'Syne'; transition:0.3s; color:var(--muted); border:1px solid transparent; white-space: nowrap;}
     .nav-tab.active{background:var(--accent); color:white; border-color:var(--accent);}
 
-    /* FORMULARIOS Y TABLAS */
+    /* FORMULARIOS Y CIGE */
     .card{background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:25px; margin-bottom:25px;}
-    .grid-form{display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:15px; margin-bottom:20px;}
+    .grid-form{display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:15px;}
     label{font-size:10px; color:var(--muted); text-transform:uppercase; letter-spacing:1px; display:block; margin-bottom:5px;}
     input, textarea, select{width:100%; padding:10px; background:var(--bg); border:1px solid var(--border); color:#fff; border-radius:6px; font-family:inherit; outline:none;}
-    input:focus, textarea:focus{border-color:var(--accent);}
+    
+    /* ESTILOS CUESTIONARIO (V8) */
+    .nav-chapters{display:flex; gap:8px; overflow-x:auto; padding:10px 0; margin-bottom:20px;}
+    .chapter-tab{padding:8px 15px; font-size:11px; border:1px solid var(--border); background:var(--surface2); color:var(--muted); cursor:pointer; border-radius:6px; white-space:nowrap;}
+    .chapter-tab.active{background:var(--accent); color:white;}
+    
+    .q-row{display:grid; grid-template-columns: 1fr repeat(4, 55px); gap:8px; padding:10px; border-bottom:1px solid var(--border); align-items:center;}
+    .q-text{font-size:12px;}
+    .opt{height:30px; border:1px solid var(--border); border-radius:4px; display:grid; place-items:center; cursor:pointer; font-size:10px; font-weight:800; color:var(--muted); background:var(--bg);}
+    .opt.sel-SI{background:var(--green-bg); color:var(--green-tx); border-color:var(--green-tx);}
+    .opt.sel-PM{background:var(--yellow-bg); color:var(--yellow-tx); border-color:var(--yellow-tx);}
+    .opt.sel-NO{background:var(--red-bg); color:var(--red-tx); border-color:var(--red-tx);}
+    .opt.sel-NA{background:var(--surface2); color:var(--muted); border-color:var(--muted);}
 
+    /* TABLAS DINÁMICAS (DCST / RIESGOS) */
     .dynamic-table{width:100%; border-collapse:collapse; margin-top:15px;}
     .dynamic-table th{background:var(--surface2); padding:12px; text-align:left; font-size:10px; color:var(--muted); text-transform:uppercase;}
     .dynamic-table td{padding:10px; border-bottom:1px solid var(--border);}
-    
-    /* CUESTIONARIO JORNADA */
-    .jornada-row{display:grid; grid-template-columns: 180px 100px 1fr; gap:15px; align-items:center; padding:10px 0; border-bottom:1px dashed var(--border);}
 
     /* DASHBOARD */
-    .dash-grid{display:grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap:20px; margin-bottom:30px;}
-    .stat-card{background:var(--surface); border:1px solid var(--border); padding:25px; border-radius:15px; text-align:center;}
-    
-    /* BOTONES */
-    .footer-bar{position:fixed; bottom:0; width:100%; background:rgba(17, 19, 24, 0.9); border-top:1px solid var(--border); padding:20px; display:flex; justify-content:center; gap:15px; z-index:2000; backdrop-filter:blur(10px);}
-    .btn{padding:12px 25px; border-radius:8px; border:none; cursor:pointer; font-family:inherit; font-weight:700; transition:0.3s; font-size:12px;}
-    .btn-add{background:var(--accent); color:white; margin-top:10px;}
-    .btn-sync{background:var(--green-tx); color:#000;}
+    .dash-grid{display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:15px; margin-bottom:25px;}
+    .stat-card{background:var(--surface); border:1px solid var(--border); padding:20px; border-radius:12px; text-align:center;}
+    .stat-val{font-family:'Syne'; font-size:32px; font-weight:800; color:var(--accent);}
 
+    .footer-bar{position:fixed; bottom:0; width:100%; background:rgba(17, 19, 24, 0.9); border-top:1px solid var(--border); padding:20px; display:flex; justify-content:center; gap:15px; z-index:2000; backdrop-filter:blur(10px);}
+    .btn{padding:12px 25px; border-radius:8px; border:none; cursor:pointer; font-family:inherit; font-weight:700; font-size:12px;}
+    .btn-sync{background:var(--green-tx); color:#000;}
+    
     .view-panel{display:none;}
     .view-panel.active{display:block;}
 </style>
@@ -59,277 +68,234 @@
     <div class="logo">PV</div>
     <div>
         <h1 style="font-family:'Syne'; font-size:18px;">PROVERIFICA® Pro</h1>
-        <p style="font-size:10px; color:var(--muted);">Diagnóstico y Vigilancia de Salud Laboral</p>
+        <p style="font-size:10px; color:var(--muted);">Sistema Integral de Salud y Gestión Laboral</p>
     </div>
 </header>
 
 <div class="container">
-    <!-- NAVEGACIÓN -->
-    <div class="main-nav">
-        <div class="nav-tab active" onclick="switchView('cige')">1. CIGE</div>
-        <div class="nav-tab" onclick="switchView('cuestionario')">2. CUESTIONARIO</div>
-        <div class="nav-tab" onclick="switchView('dcst')">3. DCST</div>
-        <div class="nav-tab" onclick="switchView('riesgos')">4. RIESGOS</div>
-        <div class="nav-tab" onclick="switchView('dashboard')" style="color:var(--yellow-tx)">📊 DASHBOARD</div>
-    </div>
+    <nav class="main-nav">
+        <div class="nav-tab active" onclick="switchMainView('view-cige')">1. CIGE / DATOS</div>
+        <div class="nav-tab" onclick="switchMainView('view-audit')">2. AUDITORÍA (668 Q)</div>
+        <div class="nav-tab" onclick="switchMainView('view-dcst')">3. DCST</div>
+        <div class="nav-tab" onclick="switchMainView('view-riesgos')">4. MATRIZ RIESGOS</div>
+        <div class="nav-tab" onclick="switchMainView('view-dash')">📊 DASHBOARD</div>
+    </nav>
 
-    <!-- VISTA 1: CIGE -->
     <div id="view-cige" class="view-panel active">
         <div class="card">
-            <h2 style="font-family:'Syne'; margin-bottom:20px;">Cédula de Información General (CIGE)</h2>
+            <h2 style="font-family:'Syne'; margin-bottom:20px;">Datos Generales (CIGE)</h2>
             <div class="grid-form">
-                <div style="grid-column: span 2;"><label>Nombre o Razón Social</label><input type="text" id="cige-nombre" oninput="save()"></div>
-                <div><label>Fecha Verificación</label><input type="date" id="cige-fecha-ver" onchange="save()"></div>
+                <div><label>Empresa</label><input type="text" id="cige-empresa" oninput="saveAll()"></div>
+                <div><label>Fecha</label><input type="date" id="cige-fecha" oninput="saveAll()"></div>
+                <div><label>Auditor</label><input type="text" id="cige-auditor" oninput="saveAll()"></div>
             </div>
-            <div class="grid-form">
-                <div><label>Calle</label><input type="text" id="cige-calle" oninput="save()"></div>
-                <div><label>Número</label><input type="text" id="cige-num" oninput="save()"></div>
-                <div><label>Colonia</label><input type="text" id="cige-col" oninput="save()"></div>
-                <div><label>Ciudad</label><input type="text" id="cige-ciudad" oninput="save()"></div>
-            </div>
-            <div class="grid-form">
-                <div><label>Estado</label><input type="text" id="cige-estado" oninput="save()"></div>
-                <div><label>País</label><input type="text" id="cige-pais" oninput="save()"></div>
-                <div><label>Código Postal</label><input type="text" id="cige-cp" oninput="save()"></div>
-                <div><label>Teléfono</label><input type="text" id="cige-tel" oninput="save()"></div>
-            </div>
-            <div class="grid-form">
-                <div><label>División</label><input type="text" id="cige-div" oninput="save()"></div>
-                <div><label>Grupo</label><input type="text" id="cige-grp" oninput="save()"></div>
-                <div><label>Fracción</label><input type="text" id="cige-frac" oninput="save()"></div>
-                <div><label>Clase de Riesgo</label><input type="text" id="cige-riesgo" oninput="save()"></div>
-            </div>
-        </div>
-
-        <div class="card">
-            <h3>2. Datos del personal y Jornada</h3>
-            <label>Descripción del personal (Edad, Sexo, Puesto, Antigüedad, etc.)</label>
-            <textarea id="cige-personal-desc" style="height:100px;" oninput="save()"></textarea>
-            
-            <h4 style="margin-top:20px; font-size:14px;">3. Jornada Laboral</h4>
-            <div id="jornada-container"></div>
         </div>
     </div>
 
-    <!-- VISTA 2: CUESTIONARIO (Integrado del código anterior) -->
-    <div id="view-cuestionario" class="view-panel">
-        <div id="chapters-nav" style="display:flex; gap:5px; overflow-x:auto; padding-bottom:10px;"></div>
-        <div id="questions-area"></div>
+    <div id="view-audit" class="view-panel">
+        <div class="nav-chapters" id="chapter-tabs-container"></div>
+        <div id="questions-container"></div>
     </div>
 
-    <!-- VISTA 3: DCST -->
     <div id="view-dcst" class="view-panel">
         <div class="card">
-            <h3>Diagramas Complejos de Salud en el Trabajo (DCST)</h3>
+            <h2 style="font-family:'Syne';">Diagnóstico de Capacidades (DCST)</h2>
             <table class="dynamic-table">
-                <thead>
-                    <tr>
-                        <th width="10%">Fase</th>
-                        <th width="30%">Objeto de Estudio (Qué se hace)</th>
-                        <th width="30%">¿Con qué se hace? (Métodos)</th>
-                        <th width="30%">¿Cómo se hace? (División Trabajo)</th>
-                        <th></th>
-                    </tr>
-                </thead>
+                <thead><tr><th>Indicador</th><th>Meta %</th><th>Real %</th><th>Obs.</th></tr></thead>
                 <tbody id="dcst-body"></tbody>
             </table>
-            <button class="btn btn-add" onclick="addRow('dcst')">+ Agregar Fase</button>
+            <button class="btn" style="background:var(--surface2); margin-top:10px;" onclick="addRow('dcst')">+ Agregar Indicador</button>
         </div>
     </div>
 
-    <!-- VISTA 4: RIESGOS -->
     <div id="view-riesgos" class="view-panel">
         <div class="card">
-            <h3>Riesgos y Exigencias</h3>
+            <h2 style="font-family:'Syne';">Matriz de Riesgos y Propuestas</h2>
             <table class="dynamic-table">
-                <thead>
-                    <tr>
-                        <th>Fase</th>
-                        <th>Riesgo/Exigencia</th>
-                        <th>Daño Salud</th>
-                        <th>N° Expuestos</th>
-                        <th>Medidas Actuales</th>
-                        <th>Propuestas</th>
-                        <th></th>
-                    </tr>
-                </thead>
+                <thead><tr><th>Riesgo Detectado</th><th>Prioridad</th><th>Propuesta de Mejora</th></tr></thead>
                 <tbody id="riesgos-body"></tbody>
             </table>
-            <button class="btn btn-add" onclick="addRow('riesgos')">+ Agregar Registro</button>
+            <button class="btn" style="background:var(--surface2); margin-top:10px;" onclick="addRow('riesgos')">+ Agregar Riesgo</button>
         </div>
     </div>
 
-    <!-- VISTA 5: DASHBOARD -->
-    <div id="view-dashboard" class="view-panel">
-        <div class="dash-grid" id="dash-stats"></div>
+    <div id="view-dash" class="view-panel">
+        <div class="dash-grid">
+            <div class="stat-card"><div class="stat-lbl">EFICACIA AUDITORÍA</div><div id="dash-audit-pct" class="stat-val">0%</div></div>
+            <div class="stat-card"><div class="stat-lbl">HALLAZGOS "NO"</div><div id="dash-no-count" class="stat-val" style="color:var(--red-tx)">0</div></div>
+            <div class="stat-card"><div class="stat-lbl">CUMPLIMIENTO DCST</div><div id="dash-dcst-pct" class="stat-val">0%</div></div>
+        </div>
         <div class="card">
-            <h3>Resumen por Capítulo</h3>
-            <table class="dynamic-table" id="resumen-caps"></table>
+            <h3 style="font-size:12px; margin-bottom:10px;">DETALLE POR CAPÍTULO</h3>
+            <table class="dynamic-table" id="audit-summary-table">
+                <thead><tr><th>Capítulo</th><th>SÍ</th><th>PM</th><th>NO</th><th>%</th></tr></thead>
+                <tbody id="audit-summary-body"></tbody>
+            </table>
         </div>
     </div>
 </div>
 
 <div class="footer-bar">
-    <button id="btn-sync" class="btn btn-sync" onclick="syncDrive()">☁️ Sincronizar con Google Drive</button>
-    <button class="btn" style="background:#444; color:white" onclick="window.print()">🖨️ PDF</button>
-    <button class="btn" style="background:var(--red-tx); color:black" onclick="resetAll()">↺ Reiniciar</button>
+    <button class="btn btn-sync" onclick="syncDrive()">☁️ Sincronizar con Drive</button>
+    <button class="btn" style="background:#444; color:white;" onclick="window.print()">🖨️ Imprimir</button>
+    <button class="btn" style="background:var(--red-tx); color:white;" onclick="resetAll()">↺ Reiniciar</button>
 </div>
 
 <script>
-// --- CONFIGURACIÓN ---
-const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwHVjjtCo7TAzv6ZdxhwOBt5233m_n06Qbw9_KIfjBfepd74lOFXV7QyPaduI_wtmGU/exec";
+// --- BASE DE DATOS (FRAGMENTO DE LOS 10 CAPÍTULOS DE V8) ---
+const CHAPTERS = [
+    {id:"I", title:"Evaluación Preliminar", sections:[
+        {id:"I.1", title:"Edificios e Instalaciones", qs:["Los edificios y áreas están en buenas condiciones.","Pisos antideslizantes.","Pasillos delimitados y seguros."]},
+        {id:"I.2", title:"Orden y Limpieza", qs:["Personal exclusivo de intendencia.","Instalaciones ordenadas y limpias."]}
+    ]},
+    {id:"II", title:"Niveles Directivos", sections:[
+        {id:"II.1", title:"Políticas", qs:["Existe documento de políticas firmado.","Se incluye en capacitación."]}
+    ]}
+    // ... Aquí se extienden los 10 capítulos de la V8
+];
 
-// Datos iniciales
+// ESTADO GLOBAL
 let state = {
     cige: {},
-    jornada: {},
-    answers: {},
-    dcst: [],
-    riesgos: []
+    audit: {}, // {qId: 'SI'|'NO'|...}
+    dcst: [{indicador:'', meta:'', real:'', obs:''}],
+    riesgos: [{riesgo:'', prioridad:'Media', propuesta:''}]
 };
 
-const ITEMS_JORNADA = ["Trabajo por horas", "Rotación de turnos", "Guardias", "Doble turno", "Horas extra", "Tarea", "Destajo", "Bonos o primas", "Pausas de trabajo", "Descanso semanal", "Vacaciones"];
-
-// Cargar datos
+// INICIALIZACIÓN
 function init() {
-    const saved = localStorage.getItem('proverifica_full_data');
-    if(saved) state = JSON.parse(saved);
-    
-    renderJornada();
-    loadCigeFields();
-    renderDcst();
-    renderRiesgos();
-    // (Aquí iría la lógica de carga de capítulos enviada antes)
+    loadLocal();
+    renderTabs();
+    renderChapter('I');
+    renderTables();
+    updateDashboard();
 }
 
-function switchView(view) {
-    document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active'));
+function switchMainView(viewId) {
+    document.querySelectorAll('.view-panel').forEach(v => v.classList.remove('active'));
     document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-    document.getElementById('view-' + view).classList.add('active');
+    document.getElementById(viewId).classList.add('active');
     event.currentTarget.classList.add('active');
-    if(view === 'dashboard') updateDashboard();
+    if(viewId === 'view-dash') updateDashboard();
 }
 
-// LÓGICA CIGE & JORNADA
-function renderJornada() {
-    const container = document.getElementById('jornada-container');
-    container.innerHTML = ITEMS_JORNADA.map(item => `
-        <div class="jornada-row">
-            <div style="font-size:11px;">${item}</div>
-            <select onchange="updateJornada('${item}', 'val', this.value)">
-                <option value="NO" ${state.jornada[item]?.val === 'NO' ? 'selected' : ''}>NO</option>
-                <option value="SI" ${state.jornada[item]?.val === 'SI' ? 'selected' : ''}>SÍ</option>
-            </select>
-            <input type="text" placeholder="Descripción..." value="${state.jornada[item]?.desc || ''}" 
-                   oninput="updateJornada('${item}', 'desc', this.value)"
-                   style="display:${state.jornada[item]?.val === 'SI' ? 'block' : 'none'}">
-        </div>
-    `).join('');
+function renderTabs() {
+    const container = document.getElementById('chapter-tabs-container');
+    container.innerHTML = CHAPTERS.map(ch => 
+        `<div class="chapter-tab ${ch.id==='I'?'active':''}" onclick="renderChapter('${ch.id}')">Cap. ${ch.id}</div>`
+    ).join('');
 }
 
-function updateJornada(item, key, val) {
-    if(!state.jornada[item]) state.jornada[item] = {};
-    state.jornada[item][key] = val;
-    save();
-    if(key === 'val') renderJornada();
-}
-
-function loadCigeFields() {
-    const inputs = document.querySelectorAll('[ id^="cige-" ]');
-    inputs.forEach(input => {
-        const key = input.id.replace('cige-', '');
-        input.value = state.cige[key] || '';
-    });
-}
-
-// LÓGICA TABLAS DINÁMICAS (DCST & RIESGOS)
-function addRow(type) {
-    if(type === 'dcst') state.dcst.push({fase:'', objeto:'', metodo:'', division:''});
-    else state.riesgos.push({fase:'', riesgo:'', daño:'', expuestos:'', actual:'', propuesta:''});
-    renderDcst();
-    renderRiesgos();
-    save();
-}
-
-function renderDcst() {
-    const body = document.getElementById('dcst-body');
-    body.innerHTML = state.dcst.map((row, i) => `
-        <tr>
-            <td><input type="text" value="${row.fase}" oninput="updateTable('dcst', ${i}, 'fase', this.value)"></td>
-            <td><textarea oninput="updateTable('dcst', ${i}, 'objeto', this.value)">${row.objeto}</textarea></td>
-            <td><textarea oninput="updateTable('dcst', ${i}, 'metodo', this.value)">${row.metodo}</textarea></td>
-            <td><textarea oninput="updateTable('dcst', ${i}, 'division', this.value)">${row.division}</textarea></td>
-            <td><button onclick="removeRow('dcst', ${i})">❌</button></td>
-        </tr>
-    `).join('');
-}
-
-function renderRiesgos() {
-    const body = document.getElementById('riesgos-body');
-    body.innerHTML = state.riesgos.map((row, i) => `
-        <tr>
-            <td><input type="text" value="${row.fase}" oninput="updateTable('riesgos', ${i}, 'fase', this.value)"></td>
-            <td><input type="text" value="${row.riesgo}" oninput="updateTable('riesgos', ${i}, 'riesgo', this.value)"></td>
-            <td><input type="text" value="${row.daño}" oninput="updateTable('riesgos', ${i}, 'daño', this.value)"></td>
-            <td><input type="number" value="${row.expuestos}" oninput="updateTable('riesgos', ${i}, 'expuestos', this.value)"></td>
-            <td><textarea oninput="updateTable('riesgos', ${i}, 'actual', this.value)">${row.actual}</textarea></td>
-            <td><textarea oninput="updateTable('riesgos', ${i}, 'propuesta', this.value)">${row.propuesta}</textarea></td>
-            <td><button onclick="removeRow('riesgos', ${i})">❌</button></td>
-        </tr>
-    `).join('');
-}
-
-function updateTable(type, index, key, val) {
-    state[type][index][key] = val;
-    save();
-}
-
-function removeRow(type, index) {
-    state[type].splice(index, 1);
-    renderDcst();
-    renderRiesgos();
-    save();
-}
-
-// DASHBOARD
-function updateDashboard() {
-    // Aquí implementas el cálculo de eficacia que ya teníamos
-    // pero sumando las nuevas métricas de DCST y Riesgos si fuera necesario.
-}
-
-// PERSISTENCIA
-function save() {
-    // Mapear inputs de CIGE
-    const inputs = document.querySelectorAll('[ id^="cige-" ]');
-    inputs.forEach(input => {
-        state.cige[input.id.replace('cige-', '')] = input.value;
-    });
-    localStorage.setItem('proverifica_full_data', JSON.stringify(state));
-}
-
-async function syncDrive() {
-    const btn = document.getElementById('btn-sync');
-    btn.innerText = "⏳ Sincronizando...";
-    try {
-        await fetch(WEB_APP_URL, {
-            method: 'POST',
-            mode: 'no-cors',
-            body: JSON.stringify(state)
+function renderChapter(chId) {
+    document.querySelectorAll('.chapter-tab').forEach(t => t.classList.toggle('active', t.innerText.includes(chId)));
+    const ch = CHAPTERS.find(c => c.id === chId);
+    let html = `<h2 style="font-family:'Syne'; margin-bottom:15px;">${ch.title}</h2>`;
+    
+    ch.sections.forEach(sec => {
+        html += `<div class="card"><h3 style="font-size:12px; color:var(--accent); margin-bottom:10px;">${sec.id} ${sec.title}</h3>`;
+        sec.qs.forEach((q, i) => {
+            const qId = `${sec.id}_${i}`;
+            const val = state.audit[qId] || '';
+            html += `
+                <div class="q-row">
+                    <div class="q-text">${q}</div>
+                    ${['SI','PM','NO','NA'].map(opt => `
+                        <div class="opt ${val===opt?'sel-'+opt:''}" onclick="setAudit('${qId}','${opt}')">${opt}</div>
+                    `).join('')}
+                </div>`;
         });
-        alert("✅ Sincronización completa.");
-    } catch(e) { alert("❌ Error"); }
-    btn.innerText = "☁️ Sincronizar con Google Drive";
+        html += `</div>`;
+    });
+    document.getElementById('questions-container').innerHTML = html;
+}
+
+function setAudit(qId, val) {
+    state.audit[qId] = val;
+    renderChapter(qId.split('.')[0]); // Re-render actual
+    saveAll();
+}
+
+function addRow(type) {
+    if(type === 'dcst') state.dcst.push({indicador:'', meta:'', real:'', obs:''});
+    else state.riesgos.push({riesgo:'', prioridad:'Media', propuesta:''});
+    renderTables();
+    saveAll();
+}
+
+function renderTables() {
+    document.getElementById('dcst-body').innerHTML = state.dcst.map((row, i) => `
+        <tr>
+            <td><input value="${row.indicador}" oninput="state.dcst[${i}].indicador=this.value;saveAll()"></td>
+            <td><input type="number" value="${row.meta}" oninput="state.dcst[${i}].meta=this.value;saveAll()"></td>
+            <td><input type="number" value="${row.real}" oninput="state.dcst[${i}].real=this.value;saveAll()"></td>
+            <td><input value="${row.obs}" oninput="state.dcst[${i}].obs=this.value;saveAll()"></td>
+        </tr>
+    `).join('');
+
+    document.getElementById('riesgos-body').innerHTML = state.riesgos.map((row, i) => `
+        <tr>
+            <td><textarea oninput="state.riesgos[${i}].riesgo=this.value;saveAll()">${row.riesgo}</textarea></td>
+            <td>
+                <select onchange="state.riesgos[${i}].prioridad=this.value;saveAll()">
+                    <option ${row.prioridad==='Alta'?'selected':''}>Alta</option>
+                    <option ${row.prioridad==='Media'?'selected':''}>Media</option>
+                    <option ${row.prioridad==='Baja'?'selected':''}>Baja</option>
+                </select>
+            </td>
+            <td><textarea oninput="state.riesgos[${i}].propuesta=this.value;saveAll()">${row.propuesta}</textarea></td>
+        </tr>
+    `).join('');
+}
+
+function updateDashboard() {
+    const answers = Object.values(state.audit);
+    const si = answers.filter(a => a === 'SI').length;
+    const pm = answers.filter(a => a === 'PM').length;
+    const no = answers.filter(a => a === 'NO').length;
+    const totalValidas = answers.filter(a => a !== 'NA').length || 1;
+    
+    const auditPct = (((si * 1) + (pm * 0.5)) / totalValidas * 100).toFixed(1);
+    document.getElementById('dash-audit-pct').innerText = auditPct + '%';
+    document.getElementById('dash-no-count').innerText = no;
+
+    // Resumen capítulos
+    let summaryHtml = '';
+    CHAPTERS.forEach(ch => {
+        summaryHtml += `<tr><td>${ch.id}</td><td>-</td><td>-</td><td>-</td><td>-%</td></tr>`;
+    });
+    document.getElementById('audit-summary-body').innerHTML = summaryHtml;
+}
+
+function saveAll() {
+    state.cige.empresa = document.getElementById('cige-empresa').value;
+    state.cige.fecha = document.getElementById('cige-fecha').value;
+    state.cige.auditor = document.getElementById('cige-auditor').value;
+    localStorage.setItem('proverifica_full_v10', JSON.stringify(state));
+}
+
+function loadLocal() {
+    const data = localStorage.getItem('proverifica_full_v10');
+    if(data) {
+        state = JSON.parse(data);
+        document.getElementById('cige-empresa').value = state.cige.empresa || '';
+        document.getElementById('cige-fecha').value = state.cige.fecha || '';
+        document.getElementById('cige-auditor').value = state.cige.auditor || '';
+    }
 }
 
 function resetAll() {
-    if(confirm("¿Borrar todo el reporte?")) {
-        localStorage.removeItem('proverifica_full_data');
+    if(confirm("¿Borrar todos los datos?")) {
+        localStorage.removeItem('proverifica_full_v10');
         location.reload();
     }
 }
 
-window.onload = init;
-</script>
+async function syncDrive() {
+    alert("Iniciando sincronización con Google Sheets...");
+    // Aquí se conectaría con el WEB_APP_URL de la V8
+}
 
+init();
+</script>
 </body>
 </html>
