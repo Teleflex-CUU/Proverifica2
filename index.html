@@ -6,7 +6,7 @@
 <title>PROVERIFICA® Pro — Sistema Integral de Gestión de Salud</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=IBM+Plex+Mono:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <style>
-    /* VARIABLES Y ESTILOS BASE (V9) */
+    /* VARIABLES Y ESTILOS BASE */
     :root{
         --bg:#0b0d12;--surface:#111318;--surface2:#181c24;--border:#22273a;
         --text:#dde3f5;--muted:#5a6282;--accent:#3d6fff;
@@ -28,10 +28,11 @@
     /* FORMULARIOS Y CIGE */
     .card{background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:25px; margin-bottom:25px;}
     .grid-form{display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:15px;}
+    .full-width { grid-column: 1 / -1; }
     label{font-size:10px; color:var(--muted); text-transform:uppercase; letter-spacing:1px; display:block; margin-bottom:5px;}
     input, textarea, select{width:100%; padding:10px; background:var(--bg); border:1px solid var(--border); color:#fff; border-radius:6px; font-family:inherit; outline:none;}
     
-    /* ESTILOS CUESTIONARIO (V8) */
+    /* ESTILOS CUESTIONARIO */
     .nav-chapters{display:flex; gap:8px; overflow-x:auto; padding:10px 0; margin-bottom:20px;}
     .chapter-tab{padding:8px 15px; font-size:11px; border:1px solid var(--border); background:var(--surface2); color:var(--muted); cursor:pointer; border-radius:6px; white-space:nowrap;}
     .chapter-tab.active{background:var(--accent); color:white;}
@@ -75,20 +76,20 @@
 <div class="container">
     <nav class="main-nav">
         <div class="nav-tab active" onclick="switchMainView('view-cige')">1. CIGE / DATOS</div>
-        <div class="nav-tab" onclick="switchMainView('view-audit')">2. AUDITORÍA (668 Q)</div>
+        <div class="nav-tab" onclick="switchMainView('view-audit')">2. AUDITORÍA</div>
         <div class="nav-tab" onclick="switchMainView('view-dcst')">3. DCST</div>
         <div class="nav-tab" onclick="switchMainView('view-riesgos')">4. MATRIZ RIESGOS</div>
         <div class="nav-tab" onclick="switchMainView('view-dash')">📊 DASHBOARD</div>
     </nav>
 
-   <div id="view-cige" class="view-panel active">
+    <div id="view-cige" class="view-panel active">
         <div class="card">
             <h2 style="font-family:'Syne'; margin-bottom:20px;">Datos Generales (CIGE)</h2>
             <div class="grid-form">
                 <div><label>Razón Social / Nombre Comercial</label><input type="text" id="cige-razon-social" oninput="saveAll()"></div>
                 <div><label>R.F.C.</label><input type="text" id="cige-rfc" oninput="saveAll()"></div>
                 <div><label>Registro Patronal</label><input type="text" id="cige-registro-patronal" oninput="saveAll()"></div>
-                <div style="grid-column: 1 / -1;"><label>Domicilio (Calle, No., Col., Mun., C.P., Estado)</label><input type="text" id="cige-domicilio" oninput="saveAll()"></div>
+                <div class="full-width"><label>Domicilio (Calle, No., Col., Mun., C.P., Estado)</label><input type="text" id="cige-domicilio" oninput="saveAll()"></div>
                 <div><label>Giro de la Empresa</label><input type="text" id="cige-giro" oninput="saveAll()"></div>
                 <div><label>Representante Legal</label><input type="text" id="cige-representante" oninput="saveAll()"></div>
                 <div><label>Sindicato Titular</label><input type="text" id="cige-sindicato" oninput="saveAll()"></div>
@@ -151,7 +152,7 @@
 </div>
 
 <script>
-// --- BASE DE DATOS (FRAGMENTO DE LOS 10 CAPÍTULOS DE V8) ---
+// --- BASE DE DATOS (Puedes pegar aquí tus 10 capítulos completos más adelante) ---
 const CHAPTERS = [
     {id:"I", title:"Evaluación Preliminar", sections:[
         {id:"I.1", title:"Edificios e Instalaciones", qs:["Los edificios y áreas están en buenas condiciones.","Pisos antideslizantes.","Pasillos delimitados y seguros."]},
@@ -160,13 +161,12 @@ const CHAPTERS = [
     {id:"II", title:"Niveles Directivos", sections:[
         {id:"II.1", title:"Políticas", qs:["Existe documento de políticas firmado.","Se incluye en capacitación."]}
     ]}
-    // ... Aquí se extienden los 10 capítulos de la V8
 ];
 
 // ESTADO GLOBAL
 let state = {
     cige: {},
-    audit: {}, // {qId: 'SI'|'NO'|...}
+    audit: {}, 
     dcst: [{indicador:'', meta:'', real:'', obs:''}],
     riesgos: [{riesgo:'', prioridad:'Media', propuesta:''}]
 };
@@ -184,7 +184,15 @@ function switchMainView(viewId) {
     document.querySelectorAll('.view-panel').forEach(v => v.classList.remove('active'));
     document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
     document.getElementById(viewId).classList.add('active');
-    event.currentTarget.classList.add('active');
+    
+    // Buscar la pestaña que se clickeó y activarla
+    const tabs = document.querySelectorAll('.nav-tab');
+    for (let tab of tabs) {
+        if (tab.getAttribute('onclick').includes(viewId)) {
+            tab.classList.add('active');
+        }
+    }
+    
     if(viewId === 'view-dash') updateDashboard();
 }
 
@@ -198,6 +206,8 @@ function renderTabs() {
 function renderChapter(chId) {
     document.querySelectorAll('.chapter-tab').forEach(t => t.classList.toggle('active', t.innerText.includes(chId)));
     const ch = CHAPTERS.find(c => c.id === chId);
+    if(!ch) return;
+    
     let html = `<h2 style="font-family:'Syne'; margin-bottom:15px;">${ch.title}</h2>`;
     
     ch.sections.forEach(sec => {
@@ -220,7 +230,7 @@ function renderChapter(chId) {
 
 function setAudit(qId, val) {
     state.audit[qId] = val;
-    renderChapter(qId.split('.')[0]); // Re-render actual
+    renderChapter(qId.split('.')[0]); 
     saveAll();
 }
 
@@ -261,13 +271,12 @@ function updateDashboard() {
     const si = answers.filter(a => a === 'SI').length;
     const pm = answers.filter(a => a === 'PM').length;
     const no = answers.filter(a => a === 'NO').length;
-    const totalValidas = answers.filter(a => a !== 'NA').length || 1;
+    const totalValidas = answers.filter(a => a !== 'NA' && a !== '').length || 1;
     
     const auditPct = (((si * 1) + (pm * 0.5)) / totalValidas * 100).toFixed(1);
     document.getElementById('dash-audit-pct').innerText = auditPct + '%';
     document.getElementById('dash-no-count').innerText = no;
 
-    // Resumen capítulos
     let summaryHtml = '';
     CHAPTERS.forEach(ch => {
         summaryHtml += `<tr><td>${ch.id}</td><td>-</td><td>-</td><td>-</td><td>-%</td></tr>`;
@@ -276,42 +285,52 @@ function updateDashboard() {
 }
 
 function saveAll() {
-    state.cige.razonSocial = document.getElementById('cige-razon-social').value;
-    state.cige.rfc = document.getElementById('cige-rfc').value;
-    state.cige.registroPatronal = document.getElementById('cige-registro-patronal').value;
-    state.cige.domicilio = document.getElementById('cige-domicilio').value;
-    state.cige.giro = document.getElementById('cige-giro').value;
-    state.cige.representante = document.getElementById('cige-representante').value;
-    state.cige.sindicato = document.getElementById('cige-sindicato').value;
-    state.cige.plantilla = document.getElementById('cige-plantilla').value;
-    state.cige.turnos = document.getElementById('cige-turnos').value;
-    state.cige.claseRiesgo = document.getElementById('cige-clase-riesgo').value;
-    state.cige.fecha = document.getElementById('cige-fecha').value;
-    state.cige.auditor = document.getElementById('cige-auditor').value;
+    // Utilizar verificación para asegurar que los elementos existan antes de leer su valor
+    const getVal = (id) => document.getElementById(id) ? document.getElementById(id).value : '';
+    
+    state.cige.razonSocial = getVal('cige-razon-social');
+    state.cige.rfc = getVal('cige-rfc');
+    state.cige.registroPatronal = getVal('cige-registro-patronal');
+    state.cige.domicilio = getVal('cige-domicilio');
+    state.cige.giro = getVal('cige-giro');
+    state.cige.representante = getVal('cige-representante');
+    state.cige.sindicato = getVal('cige-sindicato');
+    state.cige.plantilla = getVal('cige-plantilla');
+    state.cige.turnos = getVal('cige-turnos');
+    state.cige.claseRiesgo = getVal('cige-clase-riesgo');
+    state.cige.fecha = getVal('cige-fecha');
+    state.cige.auditor = getVal('cige-auditor');
+    
     localStorage.setItem('proverifica_full_v10', JSON.stringify(state));
-}
 }
 
 function loadLocal() {
     const data = localStorage.getItem('proverifica_full_v10');
     if(data) {
-        state = JSON.parse(data);
-        if(!state.cige) state.cige = {}; // Asegurar que el objeto existe
-        
-        document.getElementById('cige-razon-social').value = state.cige.razonSocial || '';
-        document.getElementById('cige-rfc').value = state.cige.rfc || '';
-        document.getElementById('cige-registro-patronal').value = state.cige.registroPatronal || '';
-        document.getElementById('cige-domicilio').value = state.cige.domicilio || '';
-        document.getElementById('cige-giro').value = state.cige.giro || '';
-        document.getElementById('cige-representante').value = state.cige.representante || '';
-        document.getElementById('cige-sindicato').value = state.cige.sindicato || '';
-        document.getElementById('cige-plantilla').value = state.cige.plantilla || '';
-        document.getElementById('cige-turnos').value = state.cige.turnos || '';
-        document.getElementById('cige-clase-riesgo').value = state.cige.claseRiesgo || '';
-        document.getElementById('cige-fecha').value = state.cige.fecha || '';
-        document.getElementById('cige-auditor').value = state.cige.auditor || '';
-    }
-}
+        try {
+            state = JSON.parse(data);
+            if(!state.cige) state.cige = {};
+            if(!state.audit) state.audit = {};
+            if(!state.dcst) state.dcst = [{indicador:'', meta:'', real:'', obs:''}];
+            if(!state.riesgos) state.riesgos = [{riesgo:'', prioridad:'Media', propuesta:''}];
+            
+            const setVal = (id, val) => { if(document.getElementById(id)) document.getElementById(id).value = val || ''; };
+            
+            setVal('cige-razon-social', state.cige.razonSocial);
+            setVal('cige-rfc', state.cige.rfc);
+            setVal('cige-registro-patronal', state.cige.registroPatronal);
+            setVal('cige-domicilio', state.cige.domicilio);
+            setVal('cige-giro', state.cige.giro);
+            setVal('cige-representante', state.cige.representante);
+            setVal('cige-sindicato', state.cige.sindicato);
+            setVal('cige-plantilla', state.cige.plantilla);
+            setVal('cige-turnos', state.cige.turnos);
+            setVal('cige-clase-riesgo', state.cige.claseRiesgo);
+            setVal('cige-fecha', state.cige.fecha);
+            setVal('cige-auditor', state.cige.auditor);
+        } catch(e) {
+            console.error("Error cargando datos locales", e);
+        }
     }
 }
 
@@ -324,10 +343,10 @@ function resetAll() {
 
 async function syncDrive() {
     alert("Iniciando sincronización con Google Sheets...");
-    // Aquí se conectaría con el WEB_APP_URL de la V8
 }
 
-init();
+// Iniciar aplicación
+window.onload = init;
 </script>
 </body>
 </html>
