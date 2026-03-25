@@ -6,7 +6,6 @@
 <title>PROVERIFICA® Pro — Sistema Integral de Gestión de Salud</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=IBM+Plex+Mono:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <style>
-    /* VARIABLES Y ESTILOS BASE */
     :root{
         --bg:#0b0d12;--surface:#111318;--surface2:#181c24;--border:#22273a;
         --text:#dde3f5;--muted:#5a6282;--accent:#3d6fff;
@@ -20,37 +19,35 @@
     
     .container{max-width:1200px; margin:20px auto; padding:0 20px;}
 
-    /* NAVEGACIÓN PRINCIPAL */
     .main-nav{display:flex; gap:10px; margin-bottom:20px; border-bottom:1px solid var(--border); padding-bottom:10px; overflow-x: auto;}
     .nav-tab{padding:10px 20px; cursor:pointer; border-radius:8px; font-weight:700; font-family:'Syne'; transition:0.3s; color:var(--muted); border:1px solid transparent; white-space: nowrap;}
     .nav-tab.active{background:var(--accent); color:white; border-color:var(--accent);}
 
-    /* FORMULARIOS Y CIGE */
     .card{background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:25px; margin-bottom:25px;}
     .grid-form{display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:15px;}
     .full-width { grid-column: 1 / -1; }
     label{font-size:10px; color:var(--muted); text-transform:uppercase; letter-spacing:1px; display:block; margin-bottom:5px;}
     input, textarea, select{width:100%; padding:10px; background:var(--bg); border:1px solid var(--border); color:#fff; border-radius:6px; font-family:inherit; outline:none;}
     
-    /* ESTILOS CUESTIONARIO */
     .nav-chapters{display:flex; gap:8px; overflow-x:auto; padding:10px 0; margin-bottom:20px;}
     .chapter-tab{padding:8px 15px; font-size:11px; border:1px solid var(--border); background:var(--surface2); color:var(--muted); cursor:pointer; border-radius:6px; white-space:nowrap;}
     .chapter-tab.active{background:var(--accent); color:white;}
     
-    .q-row{display:grid; grid-template-columns: 1fr repeat(4, 55px); gap:8px; padding:10px; border-bottom:1px solid var(--border); align-items:center;}
+    .q-row{display:grid; grid-template-columns: 1fr auto; gap:15px; padding:10px; border-bottom:1px solid var(--border); align-items:center;}
     .q-text{font-size:12px;}
-    .opt{height:30px; border:1px solid var(--border); border-radius:4px; display:grid; place-items:center; cursor:pointer; font-size:10px; font-weight:800; color:var(--muted); background:var(--bg);}
+    .opts-group{display:flex; gap:5px;}
+    .opt{width:45px; height:30px; border:1px solid var(--border); border-radius:4px; display:grid; place-items:center; cursor:pointer; font-size:10px; font-weight:800; color:var(--muted); background:var(--bg);}
     .opt.sel-SI{background:var(--green-bg); color:var(--green-tx); border-color:var(--green-tx);}
     .opt.sel-PM{background:var(--yellow-bg); color:var(--yellow-tx); border-color:var(--yellow-tx);}
     .opt.sel-NO{background:var(--red-bg); color:var(--red-tx); border-color:var(--red-tx);}
     .opt.sel-NA{background:var(--surface2); color:var(--muted); border-color:var(--muted);}
+    
+    .obs-input{margin-top:8px; margin-bottom:10px; border-color:var(--border); font-size:11px;}
 
-    /* TABLAS DINÁMICAS (DCST / RIESGOS) */
     .dynamic-table{width:100%; border-collapse:collapse; margin-top:15px;}
     .dynamic-table th{background:var(--surface2); padding:12px; text-align:left; font-size:10px; color:var(--muted); text-transform:uppercase;}
-    .dynamic-table td{padding:10px; border-bottom:1px solid var(--border);}
+    .dynamic-table td{padding:10px; border-bottom:1px solid var(--border); font-size:12px;}
 
-    /* DASHBOARD */
     .dash-grid{display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:15px; margin-bottom:25px;}
     .stat-card{background:var(--surface); border:1px solid var(--border); padding:20px; border-radius:12px; text-align:center;}
     .stat-val{font-family:'Syne'; font-size:32px; font-weight:800; color:var(--accent);}
@@ -131,14 +128,13 @@
 
     <div id="view-dash" class="view-panel">
         <div class="dash-grid">
-            <div class="stat-card"><div class="stat-lbl">EFICACIA AUDITORÍA</div><div id="dash-audit-pct" class="stat-val">0%</div></div>
+            <div class="stat-card"><div class="stat-lbl">EFICACIA TOTAL</div><div id="dash-audit-pct" class="stat-val">0%</div></div>
             <div class="stat-card"><div class="stat-lbl">HALLAZGOS "NO"</div><div id="dash-no-count" class="stat-val" style="color:var(--red-tx)">0</div></div>
-            <div class="stat-card"><div class="stat-lbl">CUMPLIMIENTO DCST</div><div id="dash-dcst-pct" class="stat-val">0%</div></div>
         </div>
         <div class="card">
-            <h3 style="font-size:12px; margin-bottom:10px;">DETALLE POR CAPÍTULO</h3>
+            <h3 style="font-size:12px; margin-bottom:10px; color:var(--muted);">DESGLOSE DE EFICACIA POR CAPÍTULO</h3>
             <table class="dynamic-table" id="audit-summary-table">
-                <thead><tr><th>Capítulo</th><th>SÍ</th><th>PM</th><th>NO</th><th>%</th></tr></thead>
+                <thead><tr><th>Capítulo</th><th>SÍ</th><th>PM</th><th>NO</th><th>NA</th><th>Eficacia</th></tr></thead>
                 <tbody id="audit-summary-body"></tbody>
             </table>
         </div>
@@ -152,21 +148,56 @@
 </div>
 
 <script>
-// --- BASE DE DATOS (Puedes pegar aquí tus 10 capítulos completos más adelante) ---
-const CHAPTERS = [
-    {id:"I", title:"Evaluación Preliminar", sections:[
-        {id:"I.1", title:"Edificios e Instalaciones", qs:["Los edificios y áreas están en buenas condiciones.","Pisos antideslizantes.","Pasillos delimitados y seguros."]},
-        {id:"I.2", title:"Orden y Limpieza", qs:["Personal exclusivo de intendencia.","Instalaciones ordenadas y limpias."]}
-    ]},
-    {id:"II", title:"Niveles Directivos", sections:[
-        {id:"II.1", title:"Políticas", qs:["Existe documento de políticas firmado.","Se incluye en capacitación."]}
-    ]}
-];
+// =================================================================================
+// INSTRUCCIÓN IMPORTANTE:
+// BORRA EL ARREGLO "const CHAPTERS = [...]" QUE ESTÁ AQUÍ ABAJO Y PEGA EN SU LUGAR 
+// TU ARREGLO "CHAPTERS" ORIGINAL QUE CONTIENE TUS 10 CAPÍTULOS Y 668 PREGUNTAS.
+// =================================================================================
+function renderCuestionario() {
+    const nav = document.getElementById('chapters-nav');
+    const area = document.getElementById('questions-area');
+    
+    CHAPTERS.forEach(ch => {
+        // 1. Crear botón de navegación
+        const btn = document.createElement('button');
+        btn.className = 'nav-tab';
+        btn.innerText = ch.id;
+        btn.onclick = () => showChapter(ch.id);
+        nav.appendChild(btn);
+
+        // 2. Crear panel de preguntas
+        const panel = document.createElement('div');
+        panel.id = 'panel-' + ch.id;
+        panel.style.display = 'none';
+        
+        ch.sections.forEach(sec => {
+            let secHtml = `<div class="card"><h4>${sec.id} ${sec.title}</h4>`;
+            sec.qs.forEach((q, i) => {
+                const qId = `${sec.id}-${i}`;
+                secHtml += `
+                    <div class="jornada-row">
+                        <div style="font-size:11px;">${i+1}. ${q}</div>
+                        <select onchange="saveAns('${qId}', this.value)">
+                            <option value="">--</option>
+                            <option value="SI">SÍ</option>
+                            <option value="PM">PM</option>
+                            <option value="NO">NO</option>
+                            <option value="NA">NA</option>
+                        </select>
+                    </div>`;
+            });
+            secHtml += `</div>`;
+            panel.innerHTML += secHtml;
+        });
+        area.appendChild(panel);
+    });
+}
 
 // ESTADO GLOBAL
 let state = {
     cige: {},
     audit: {}, 
+    obs: {}, // Guarda las justificaciones de PM, NO y NA
     dcst: [{indicador:'', meta:'', real:'', obs:''}],
     riesgos: [{riesgo:'', prioridad:'Media', propuesta:''}]
 };
@@ -175,7 +206,7 @@ let state = {
 function init() {
     loadLocal();
     renderTabs();
-    renderChapter('I');
+    if(CHAPTERS.length > 0) renderChapter(CHAPTERS[0].id);
     renderTables();
     updateDashboard();
 }
@@ -185,7 +216,6 @@ function switchMainView(viewId) {
     document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
     document.getElementById(viewId).classList.add('active');
     
-    // Buscar la pestaña que se clickeó y activarla
     const tabs = document.querySelectorAll('.nav-tab');
     for (let tab of tabs) {
         if (tab.getAttribute('onclick').includes(viewId)) {
@@ -198,39 +228,86 @@ function switchMainView(viewId) {
 
 function renderTabs() {
     const container = document.getElementById('chapter-tabs-container');
-    container.innerHTML = CHAPTERS.map(ch => 
-        `<div class="chapter-tab ${ch.id==='I'?'active':''}" onclick="renderChapter('${ch.id}')">Cap. ${ch.id}</div>`
+    container.innerHTML = CHAPTERS.map((ch, index) => 
+        `<div class="chapter-tab ${index===0?'active':''}" onclick="renderChapter('${ch.id}')">Cap. ${ch.id}</div>`
     ).join('');
 }
 
+function getChapterScore(chId) {
+    const ch = CHAPTERS.find(c => c.id === chId);
+    if(!ch) return 0;
+    let si = 0, pm = 0, valid = 0;
+    ch.sections.forEach(sec => {
+        sec.qs.forEach((q, i) => {
+            const val = state.audit[`${sec.id}_${i}`];
+            if (val && val !== 'NA') {
+                valid++;
+                if (val === 'SI') si++;
+                if (val === 'PM') pm++;
+            }
+        });
+    });
+    if (valid === 0) return 0;
+    return (((si + (pm * 0.5)) / valid) * 100).toFixed(1);
+}
+
 function renderChapter(chId) {
-    document.querySelectorAll('.chapter-tab').forEach(t => t.classList.toggle('active', t.innerText.includes(chId)));
+    document.querySelectorAll('.chapter-tab').forEach(t => {
+        t.classList.remove('active');
+        if(t.innerText.includes(`Cap. ${chId}`)) t.classList.add('active');
+    });
+    
     const ch = CHAPTERS.find(c => c.id === chId);
     if(!ch) return;
     
-    let html = `<h2 style="font-family:'Syne'; margin-bottom:15px;">${ch.title}</h2>`;
+    const score = getChapterScore(chId);
+    
+    let html = `
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; border-bottom:1px solid var(--border); padding-bottom:10px;">
+            <h2 style="font-family:'Syne';">${ch.title}</h2>
+            <div style="font-size:18px; font-weight:800; color:var(--accent);">${score}% Cumplimiento</div>
+        </div>`;
     
     ch.sections.forEach(sec => {
-        html += `<div class="card"><h3 style="font-size:12px; color:var(--accent); margin-bottom:10px;">${sec.id} ${sec.title}</h3>`;
+        html += `<div class="card" style="padding:15px 20px;"><h3 style="font-size:12px; color:var(--accent); margin-bottom:10px;">${sec.id} ${sec.title}</h3>`;
         sec.qs.forEach((q, i) => {
             const qId = `${sec.id}_${i}`;
             const val = state.audit[qId] || '';
+            const obs = state.obs[qId] || '';
+            
             html += `
                 <div class="q-row">
                     <div class="q-text">${q}</div>
-                    ${['SI','PM','NO','NA'].map(opt => `
-                        <div class="opt ${val===opt?'sel-'+opt:''}" onclick="setAudit('${qId}','${opt}')">${opt}</div>
-                    `).join('')}
+                    <div class="opts-group">
+                        ${['SI','PM','NO','NA'].map(opt => `
+                            <div class="opt ${val===opt?'sel-'+opt:''}" onclick="setAudit('${qId}','${opt}')">${opt}</div>
+                        `).join('')}
+                    </div>
                 </div>`;
+            
+            // Mostrar cuadro de justificación si es PM, NO o NA
+            if (val === 'PM' || val === 'NO' || val === 'NA') {
+                html += `<input type="text" class="obs-input" placeholder="Justificación obligatoria para ${val}..." value="${obs}" oninput="setObs('${qId}', this.value)">`;
+            }
         });
         html += `</div>`;
     });
     document.getElementById('questions-container').innerHTML = html;
+    updateDashboard();
 }
 
 function setAudit(qId, val) {
     state.audit[qId] = val;
-    renderChapter(qId.split('.')[0]); 
+    if (val === 'SI') {
+        delete state.obs[qId]; // Limpiar justificación si cambia a SÍ
+    }
+    const chId = qId.split('_')[0].split('.')[0]; 
+    renderChapter(chId); 
+    saveAll();
+}
+
+function setObs(qId, text) {
+    state.obs[qId] = text;
     saveAll();
 }
 
@@ -274,20 +351,37 @@ function updateDashboard() {
     const totalValidas = answers.filter(a => a !== 'NA' && a !== '').length || 1;
     
     const auditPct = (((si * 1) + (pm * 0.5)) / totalValidas * 100).toFixed(1);
-    document.getElementById('dash-audit-pct').innerText = auditPct + '%';
+    document.getElementById('dash-audit-pct').innerText = (totalValidas === 1 && answers.length === 0) ? '0%' : auditPct + '%';
     document.getElementById('dash-no-count').innerText = no;
 
     let summaryHtml = '';
     CHAPTERS.forEach(ch => {
-        summaryHtml += `<tr><td>${ch.id}</td><td>-</td><td>-</td><td>-</td><td>-%</td></tr>`;
+        let c_si=0, c_pm=0, c_no=0, c_na=0, c_valid=0;
+        ch.sections.forEach(sec => {
+            sec.qs.forEach((q, i) => {
+                const val = state.audit[`${sec.id}_${i}`];
+                if(val === 'SI') c_si++;
+                if(val === 'PM') c_pm++;
+                if(val === 'NO') c_no++;
+                if(val === 'NA') c_na++;
+                if(val && val !== 'NA') c_valid++;
+            });
+        });
+        const pct = c_valid === 0 ? 0 : (((c_si + (c_pm * 0.5)) / c_valid) * 100).toFixed(1);
+        summaryHtml += `<tr>
+            <td><strong>Cap. ${ch.id}</strong> - ${ch.title}</td>
+            <td style="color:var(--green-tx)">${c_si}</td>
+            <td style="color:var(--yellow-tx)">${c_pm}</td>
+            <td style="color:var(--red-tx)">${c_no}</td>
+            <td>${c_na}</td>
+            <td style="font-weight:bold">${pct}%</td>
+        </tr>`;
     });
     document.getElementById('audit-summary-body').innerHTML = summaryHtml;
 }
 
 function saveAll() {
-    // Utilizar verificación para asegurar que los elementos existan antes de leer su valor
     const getVal = (id) => document.getElementById(id) ? document.getElementById(id).value : '';
-    
     state.cige.razonSocial = getVal('cige-razon-social');
     state.cige.rfc = getVal('cige-rfc');
     state.cige.registroPatronal = getVal('cige-registro-patronal');
@@ -311,11 +405,11 @@ function loadLocal() {
             state = JSON.parse(data);
             if(!state.cige) state.cige = {};
             if(!state.audit) state.audit = {};
+            if(!state.obs) state.obs = {};
             if(!state.dcst) state.dcst = [{indicador:'', meta:'', real:'', obs:''}];
             if(!state.riesgos) state.riesgos = [{riesgo:'', prioridad:'Media', propuesta:''}];
             
             const setVal = (id, val) => { if(document.getElementById(id)) document.getElementById(id).value = val || ''; };
-            
             setVal('cige-razon-social', state.cige.razonSocial);
             setVal('cige-rfc', state.cige.rfc);
             setVal('cige-registro-patronal', state.cige.registroPatronal);
@@ -345,7 +439,6 @@ async function syncDrive() {
     alert("Iniciando sincronización con Google Sheets...");
 }
 
-// Iniciar aplicación
 window.onload = init;
 </script>
 </body>
