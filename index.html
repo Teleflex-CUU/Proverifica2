@@ -6,11 +6,27 @@
 <title>PROVERIFICA® Pro — Sistema Integral de Gestión de Salud</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=IBM+Plex+Mono:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <style>
-    :root{
-        --bg:#0b0d12;--surface:#111318;--surface2:#181c24;--border:#22273a;
-        --text:#dde3f5;--muted:#5a6282;--accent:#3d6fff;
-        --green-tx:#2ecc71;--yellow-tx:#f1c40f;--red-tx:#e74c3c;
-        --green-bg:rgba(46,204,113,0.1);--yellow-bg:rgba(241,196,15,0.1);--red-bg:rgba(231,76,60,0.1);
+    :root {
+        /* Base y Fondos */
+        --bg: #070e17;         /* Fondo general muy oscuro */
+        --surface: #101c2b;    /* Tarjetas con tono azulado oscuro */
+        --surface2: #1a2a40;   /* Elementos secundarios */
+        --border: #233754;     /* Bordes alineados a la marca */
+        
+        /* Textos */
+        --text: #e2e8f0;       /* Texto principal claro */
+        --muted: #94a3b8;      /* Texto secundario */
+        
+        /* Acento Corporativo Teleflex */
+        --accent: #59DDA4;     /* Verde Shamrock (acento oficial secundario) o usa #00A3E0 */
+        
+        /* Colores de Estado (SÍ, PM, NO) */
+        --green-tx: #2ecc71; 
+        --yellow-tx: #f1c40f; 
+        --red-tx: #e74c3c;
+        --green-bg: rgba(46, 204, 113, 0.15); 
+        --yellow-bg: rgba(241, 196, 15, 0.15); 
+        --red-bg: rgba(231, 76, 60, 0.15);
     }
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     body{background:var(--bg);color:var(--text);font-family:'IBM Plex Mono',monospace;padding-bottom:120px; line-height: 1.5;}
